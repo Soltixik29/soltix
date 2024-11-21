@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Soltix | Artist Page</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <style>
+        /* Styl obalů alba a tlačítek */
+        .cover-image {
+            aspect-ratio: 1 / 1;
+            object-fit: cover;
+            border-radius: 1rem;
+            position: relative;
+        }
+        .play-btn {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            color: white;
+            width: 3rem;
+            height: 3rem;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10;
+            transition: transform 0.2s ease, background 0.2s ease;
+        }
+        .play-btn:hover {
+            transform: scale(1.2);
+            background: rgba(128, 0, 128, 0.9);
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-white font-sans">
+    <!-- Header -->
+    <header class="bg-gradient-to-r from-purple-800 via-purple-600 to-purple-800 py-8 shadow-lg">
+        <div class="container mx-auto text-center">
+            <h1 class="text-5xl font-bold uppercase tracking-widest">Soltix</h1>
+            <p class="text-gray-300 mt-4 text-lg">Feel the beats. Live the vibes.</p>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="container mx-auto mt-10 text-center">
+        <img src="https://via.placeholder.com/300" alt="Soltix Logo" class="w-48 h-48 mx-auto rounded-full shadow-2xl">
+        <h2 class="text-4xl font-extrabold mt-6">Welcome to Soltix's World</h2>
+        <p class="text-gray-400 mt-4 text-lg italic">"Music speaks louder than words." 🎵</p>
+    </section>
+
+    <!-- My Tracks Section -->
+    <section class="container mx-auto mt-10">
+        <h2 class="text-3xl font-semibold mb-6 text-center text-purple-400">My Tracks</h2>
+        <div id="my-tracks" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+    </section>
+
+    <!-- Unreleased Tracks Section -->
+    <section class="container mx-auto mt-14">
+        <h2 class="text-3xl font-semibold mb-6 text-center text-red-400">Unreleased Tracks</h2>
+        <div id="unreleased-tracks" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-center py-8 mt-16">
+        <p class="text-gray-400 text-sm">&copy; 2024 Soltix. All rights reserved.</p>
+    </footer>
+
+    <!-- JavaScript -->
+    <script>
+        // Data pro sekce
+        const myTracks = [
+            {
+                title: "Demons",
+                duration: "3:45",
+                album: "Demons",
+                cover: "https://via.placeholder.com/3000",
+                audio: "track1.mp3"
+            },
+            {
+                title: "Angels",
+                duration: "4:02",
+                album: "Heaven",
+                cover: "https://via.placeholder.com/3000",
+                audio: "track2.mp3"
+            },
+            {
+                title: "Lost Souls",
+                duration: "3:58",
+                album: "Journey",
+                cover: "https://via.placeholder.com/3000",
+                audio: "track3.mp3"
+            }
+        ];
+
+        const unreleasedTracks = [
+            {
+                title: "Hidden Truths",
+                duration: "4:00",
+                album: "Unreleased",
+                cover: "https://via.placeholder.com/3000",
+                audio: "unreleased1.mp3"
+            },
+            {
+                title: "Dark Horizons",
+                duration: "3:40",
+                album: "Unreleased",
+                cover: "https://via.placeholder.com/3000",
+                audio: "unreleased2.mp3"
+            }
+        ];
+
+        let currentlyPlaying = null;
+
+        function loadTracks(sectionId, tracks) {
+            const section = document.getElementById(sectionId);
+            section.innerHTML = tracks.map((track, index) => `
+                <div class="relative bg-gray-800 rounded-lg shadow-lg hover:shadow-2xl transform hover:scale-105 transition">
+                    <img src="${track.cover}" alt="${track.title}" class="cover-image">
+                    <button id="play-btn-${sectionId}-${index}" class="play-btn" onclick="togglePlay('${sectionId}', ${index})">
+                        <i class="fas fa-play"></i>
+                    </button>
+                    <div class="p-4">
+                        <h3 class="text-lg font-bold">${track.title}</h3>
+                        <p class="text-gray-400 text-sm">Duration: ${track.duration}</p>
+                        <p class="text-gray-400 text-sm italic">Album: ${track.album}</p>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function togglePlay(sectionId, index) {
+            const tracks = sectionId === 'my-tracks' ? myTracks : unreleasedTracks;
+            const track = tracks[index];
+            const btn = document.getElementById(`play-btn-${sectionId}-${index}`);
+
+            if (currentlyPlaying && currentlyPlaying.audio !== track.audio) {
+                currentlyPlaying.audioObject.pause();
+                currentlyPlaying.btn.innerHTML = `<i class="fas fa-play"></i>`;
+                currentlyPlaying = null;
+            }
+
+            if (!currentlyPlaying || currentlyPlaying.audio !== track.audio) {
+                const audio = new Audio(track.audio);
+                audio.play();
+                btn.innerHTML = `<i class="fas fa-stop"></i>`;
+                currentlyPlaying = { audioObject: audio, btn, audio: track.audio };
+
+                audio.onended = () => {
+                    btn.innerHTML = `<i class="fas fa-play"></i>`;
+                    currentlyPlaying = null;
+                };
+            } else {
+                currentlyPlaying.audioObject.pause();
+                btn.innerHTML = `<i class="fas fa-play"></i>`;
+                currentlyPlaying = null;
+            }
+        }
+
+        // Načíst skladby
+        loadTracks('my-tracks', myTracks);
+        loadTracks('unreleased-tracks', unreleasedTracks);
+    </script>
+</body>
+</html>
