@@ -18,11 +18,7 @@
             aspect-ratio: 1 / 1;
             object-fit: cover;
             border-radius: 1rem;
-            transition: transform 0.3s ease-in-out;
-        }
-
-        .cover-image:hover {
-            transform: scale(1.05);
+            position: relative;
         }
 
         .play-btn {
@@ -30,7 +26,7 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            background: rgba(0, 0, 0, 0.7);
+            background: rgba(0, 0, 0, 0.8);
             backdrop-filter: blur(10px);
             color: white;
             width: 3rem;
@@ -40,68 +36,105 @@
             justify-content: center;
             align-items: center;
             z-index: 10;
-            transition: background 0.3s;
+            transition: background 0.2s ease;
         }
 
         .play-btn:hover {
-            background: rgba(128, 0, 128, 0.8);
-        }
-
-        .lyrics-container {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.3s ease;
-        }
-
-        .lyrics-container.open {
-            max-height: 300px; /* Adjust max-height based on content */
+            background: rgba(128, 0, 128, 0.9);
         }
 
         .lyrics-btn {
             position: absolute;
-            bottom: 1rem;
-            right: 1rem;
-            background: rgba(0, 0, 0, 0.7);
-            backdrop-filter: blur(10px);
-            color: white;
-            width: 2.5rem;
-            height: 2.5rem;
+            top: 10%;
+            right: 10%;
+            background: rgba(0, 0, 0, 0.5);
             border-radius: 50%;
+            width: 2rem;
+            height: 2rem;
             display: flex;
             justify-content: center;
             align-items: center;
-            z-index: 10;
+            color: white;
             transition: background 0.3s;
         }
 
         .lyrics-btn:hover {
-            background: rgba(128, 0, 128, 0.8);
+            background: rgba(255, 0, 255, 0.7);
+        }
+
+        .social-icons {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .social-icons i {
+            font-size: 1.5rem;
+            color: white;
+            transition: transform 0.3s;
+        }
+
+        .social-icons i:hover {
+            transform: scale(1.2);
+        }
+
+        .lyrics-container {
+            display: none;
+            transition: max-height 0.5s ease-in-out;
+            max-height: 0;
+            overflow: hidden;
+        }
+
+        .lyrics-container.open {
+            display: block;
+            max-height: 1000px;
+        }
+
+        input[type="range"] {
+            width: 100%;
         }
     </style>
 </head>
 <body class="bg-gray-900 text-white">
 
-    <!-- Header -->
-    <header class="bg-gradient-to-r from-purple-700 via-purple-500 to-purple-700 py-8 shadow-lg">
+    <header class="bg-gradient-to-r from-purple-800 via-purple-600 to-purple-800 py-8 shadow-lg">
         <div class="container mx-auto text-center">
             <h1 class="text-5xl font-bold uppercase tracking-widest">Soltix</h1>
             <p class="text-gray-300 mt-4 text-lg">Feel the beats. Live the vibes.</p>
         </div>
     </header>
 
-    <!-- Tracks Section -->
+    <section class="container mx-auto mt-10 text-center">
+        <img src="/assets/imgs/78CD93B8-7BAD-4B0F-9883-DFC26F0E37AF.png" alt="Soltix Logo" class="w-48 h-48 mx-auto rounded-full shadow-2xl">
+        <h2 class="text-4xl font-extrabold mt-6">Welcome to Soltix's World</h2>
+        <p class="text-gray-400 mt-4 text-lg italic">"Music speaks louder than words." 🎵</p>
+    </section>
+
     <section class="container mx-auto mt-10">
         <h2 class="text-3xl font-semibold mb-6 text-center text-purple-400">My Tracks</h2>
         <div id="my-tracks" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
     </section>
 
-    <!-- Unreleased Tracks Section -->
     <section class="container mx-auto mt-14">
         <h2 class="text-3xl font-semibold mb-6 text-center text-red-400">Unreleased Tracks</h2>
         <div id="unreleased-tracks" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
     </section>
 
-    <!-- JavaScript -->
+    <section class="container mx-auto mt-14 text-center">
+        <h2 class="text-3xl font-semibold mb-6 text-center text-yellow-400">Follow Soltix</h2>
+        <div class="social-icons">
+            <a href="https://www.spotify.com" target="_blank"><i class="fab fa-spotify"></i></a>
+            <a href="https://www.youtube.com" target="_blank"><i class="fab fa-youtube"></i></a>
+            <a href="https://www.instagram.com" target="_blank"><i class="fab fa-instagram"></i></a>
+            <a href="https://twitter.com" target="_blank"><i class="fab fa-twitter"></i></a>
+        </div>
+    </section>
+
+    <footer class="bg-gray-800 text-center py-8 mt-16">
+        <p class="text-gray-400 text-sm">&copy; 2024 Soltix. All rights reserved.</p>
+    </footer>
+
     <script>
         const myTracks = [
             {
@@ -110,24 +143,16 @@
                 album: "Demons",
                 cover: "/assets/imgs/0298035F-E43F-483F-A1C7-996CD4DCD312.jpeg",
                 audio: "/assets/music/Lost Boy.mp3",
-                lyrics: "This is the lyrics for Lost Boy. It's full of emotions and vibes!"
+                lyrics: "Lost in my thoughts, I can't find my way...",
             },
             {
                 title: "Angels",
                 duration: "4:02",
                 album: "Heaven",
                 cover: "https://miro.medium.com/v2/resize:fit:1362/format:webp/1*EBOL4lka5QjcYoxj6AHp-g.png",
-                audio: "track2.mp3",
-                lyrics: "These are the lyrics for Angels. Heavenly and soulful."
+                audio: "/assets/music/Angels.mp3",
+                lyrics: "I see angels in the sky, they fly so high...",
             },
-            {
-                title: "Lost Souls",
-                duration: "3:58",
-                album: "Journey",
-                cover: "https://miro.medium.com/v2/resize:fit:1362/format:webp/1*EBOL4lka5QjcYoxj6AHp-g.png",
-                audio: "track3.mp3",
-                lyrics: "Lyrics for Lost Souls. A deep and reflective song."
-            }
         ];
 
         const unreleasedTracks = [
@@ -137,7 +162,7 @@
                 album: "Unreleased",
                 cover: "/assets/imgs/BC1A09C6-4A99-4F27-9879-F66DAE6264DF.jpeg",
                 audio: "/assets/music/Rizz.mp3",
-                lyrics: "Unreleased track lyrics for Rizz. Full of mystery and intrigue."
+                lyrics: "I'm a king, that's the way it goes...",
             },
             {
                 title: "Demons",
@@ -145,8 +170,8 @@
                 album: "Unreleased",
                 cover: "/assets/imgs/96147AD7-CB32-4782-A57A-A719ACC67524.jpeg",
                 audio: "/assets/music/Demons.mp3",
-                lyrics: "Unreleased track lyrics for Demons. Dark and haunting."
-            }
+                lyrics: "Chasing demons in the night, I can feel the fight...",
+            },
         ];
 
         let currentlyPlaying = null;
@@ -164,20 +189,34 @@
                     </button>
                     <div class="p-4">
                         <h3 class="text-lg font-bold">${track.title}</h3>
-                        <p class="text-gray-400 text-sm">Duration: ${track.duration}</p>
+                        <p id="duration-${sectionId}-${index}" class="text-gray-400 text-sm">Duration: Loading...</p>
                         <p class="text-gray-400 text-sm italic">Album: ${track.album}</p>
+                        <input type="range" id="slider-${sectionId}-${index}" class="w-full mt-2" value="0" min="0" max="100" step="1" oninput="seek('${sectionId}', ${index}, this.value)">
                         <div id="lyrics-${sectionId}-${index}" class="lyrics-container text-gray-300 mt-4">
                             <p>${track.lyrics}</p>
                         </div>
                     </div>
                 </div>
             `).join('');
+
+            tracks.forEach((track, index) => {
+                const audio = new Audio(track.audio);
+                audio.addEventListener('loadedmetadata', () => {
+                    const durationElement = document.getElementById(`duration-${sectionId}-${index}`);
+                    const minutes = Math.floor(audio.duration / 60);
+                    const seconds = Math.floor(audio.duration % 60).toString().padStart(2, '0');
+                    durationElement.textContent = `Duration: ${minutes}:${seconds}`;
+                    const slider = document.getElementById(`slider-${sectionId}-${index}`);
+                    slider.max = Math.floor(audio.duration);
+                });
+            });
         }
 
         function togglePlay(sectionId, index) {
             const tracks = sectionId === 'my-tracks' ? myTracks : unreleasedTracks;
             const track = tracks[index];
             const btn = document.getElementById(`play-btn-${sectionId}-${index}`);
+            const slider = document.getElementById(`slider-${sectionId}-${index}`);
 
             if (currentlyPlaying && currentlyPlaying.audio !== track.audio) {
                 currentlyPlaying.audioObject.pause();
@@ -187,6 +226,11 @@
 
             if (!currentlyPlaying || currentlyPlaying.audio !== track.audio) {
                 const audio = new Audio(track.audio);
+
+                audio.addEventListener('timeupdate', () => {
+                    slider.value = Math.floor(audio.currentTime);
+                });
+
                 audio.play();
                 btn.innerHTML = `<i class="fas fa-stop"></i>`;
                 currentlyPlaying = { audioObject: audio, btn, audio: track.audio };
@@ -207,8 +251,26 @@
             lyricsContainer.classList.toggle('open');
         }
 
+        function seek(sectionId, index, value) {
+            const tracks = sectionId === 'my-tracks' ? myTracks : unreleasedTracks;
+            const track = tracks[index];
+
+            if (currentlyPlaying && currentlyPlaying.audio === track.audio) {
+                currentlyPlaying.audioObject.currentTime = value;
+            }
+        }
+
+        function shareTrack(track) {
+            const shareUrl = `${window.location.href}?track=${encodeURIComponent(track.audio)}`;
+            navigator.share({
+                title: track.title,
+                url: shareUrl,
+            }).catch(error => console.log("Sharing failed", error));
+        }
+
         loadTracks('my-tracks', myTracks);
         loadTracks('unreleased-tracks', unreleasedTracks);
     </script>
+
 </body>
 </html>
