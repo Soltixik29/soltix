@@ -269,11 +269,30 @@
         audioPlayer.play();
     }
 
+    function renderTracks() {
+        const trackList = document.getElementById("track-list");
+        tracks.forEach((track, index) => {
+            const trackCard = document.createElement("div");
+            trackCard.classList.add("track-card");
+
+            trackCard.innerHTML = `
+                <img src="${track.cover}" alt="${track.title}">
+                <div class="track-info">
+                    <h3>${track.title}</h3>
+                </div>
+            `;
+
+            trackCard.addEventListener("click", () => playTrack(index));
+            trackList.appendChild(trackCard);
+        });
+    }
+
     audioPlayer.addEventListener("ended", () => {
         currentTrackIndex = (currentTrackIndex + 1) % tracks.length;
         playTrack(currentTrackIndex);
     });
 
+    renderTracks();
     playTrack(currentTrackIndex);
 </script>
 
