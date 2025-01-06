@@ -159,37 +159,6 @@
             border: none;
         }
 
-        .volume-control {
-            width: 100px;
-            height: 6px;
-            background: #333;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        .volume-control input[type="range"] {
-            width: 100%;
-            background: transparent;
-            appearance: none;
-            height: 6px;
-            border-radius: 5px;
-        }
-
-        .volume-control input[type="range"]::-webkit-slider-runnable-track {
-            background: #444;
-            height: 6px;
-            border-radius: 5px;
-        }
-
-        .volume-control input[type="range"]::-webkit-slider-thumb {
-            background: #1DB954;
-            border-radius: 50%;
-            width: 12px;
-            height: 12px;
-            cursor: pointer;
-            border: none;
-        }
-
         .download-btn {
             background-color: #1DB954;
             color: white;
@@ -242,11 +211,6 @@
         <input type="range" id="progress-bar" min="0" max="100" value="0">
     </div>
 
-    <div class="volume-control">
-        <input type="range" id="volume-control" min="0" max="1" step="0.01" value="0.5">
-        <i class="fas fa-volume-up"></i>
-    </div>
-
     <div id="track-time">0:00 / 3:30</div>
 </div>
 
@@ -259,6 +223,22 @@
     let currentTrackIndex = 0;
     const audioPlayer = new Audio(tracks[currentTrackIndex].audio);
 
+    function loadTracks() {
+        const trackList = document.getElementById('track-list');
+        tracks.forEach((track, index) => {
+            const trackCard = document.createElement('div');
+            trackCard.className = 'track-card';
+            trackCard.innerHTML = `
+                <img src="${track.cover}" alt="${track.title}">
+                <div class="track-info">
+                    <h3>${track.title}</h3>
+                </div>
+            `;
+            trackCard.addEventListener('click', () => playTrack(index));
+            trackList.appendChild(trackCard);
+        });
+    }
+
     function playTrack(index) {
         currentTrackIndex = index;
         const track = tracks[currentTrackIndex];
@@ -267,24 +247,12 @@
         document.getElementById("track-cover").src = track.cover;
         document.getElementById("download-link").href = track.audio;
         audioPlayer.play();
+        updatePlayPauseButton();
     }
 
-    function renderTracks() {
-        const trackList = document.getElementById("track-list");
-        tracks.forEach((track, index) => {
-            const trackCard = document.createElement("div");
-            trackCard.classList.add("track-card");
-
-            trackCard.innerHTML = `
-                <img src="${track.cover}" alt="${track.title}">
-                <div class="track-info">
-                    <h3>${track.title}</h3>
-                </div>
-            `;
-
-            trackCard.addEventListener("click", () => playTrack(index));
-            trackList.appendChild(trackCard);
-        });
+    function updatePlayPauseButton() {
+        const playPauseBtn = document.getElementById("play-pause-btn");
+        playPauseBtn.innerHTML = audioPlayer.paused ? '<i class="fas fa-play"></i>' : '<i class="fas fa-pause"></i>';
     }
 
     audioPlayer.addEventListener("ended", () => {
@@ -292,7 +260,41 @@
         playTrack(currentTrackIndex);
     });
 
-    renderTracks();
+    audioPlayer.addEventListener("timeupdate", () => {
+        const progressBar = document.getElementById("progress-bar");
+        const trackTime = document.getElementById("track-time");
+        progressBar.value = (audioPlayer.currentTime / audioPlayer.duration) * 100 || 0;
+        const currentMinutes = Math.floor(audioPlayer.currentTime / 60);
+        const currentSeconds = Math.floor(audioPlayer.currentTime % 60).toString().padStart(2, '0');
+        const totalMinutes = Math.floor(audioPlayer.duration / 60);
+        const totalSeconds = Math.floor(audioPlayer.duration % 60).toString().padStart(2, '0');
+        trackTime.textContent = `${currentMinutes}:${currentSeconds} / ${totalMinutes}:${totalSeconds}`;
+    });
+
+    document.getElementById("play-pause-btn").addEventListener("click", () => {
+        if (audioPlayer.paused) {
+            audioPlayer.play();
+        } else {
+            audioPlayer.pause();
+        }
+        updatePlayPauseButton();
+    });
+
+    document.getElementById("prev-btn").addEventListener("click", () => {
+        currentTrackIndex = (currentTrackIndex - 1 + tracks.length) % tracks.length;
+        playTrack(currentTrackIndex);
+    });
+
+    document.getElementById("next-btn").addEventListener("click", () => {
+        currentTrackIndex = (currentTrackIndex + 1) % tracks.length;
+        playTrack(currentTrackIndex);
+    });
+
+    document.getElementById("progress-bar").addEventListener("input", (e) => {
+        audioPlayer.currentTime = (e.target.value / 100) * audioPlayer.duration;
+    });
+
+    loadTracks();
     playTrack(currentTrackIndex);
 </script>
 
