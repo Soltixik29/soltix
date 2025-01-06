@@ -12,24 +12,45 @@
             font-family: 'Roboto', sans-serif;
             background-color: #111111;
             color: white;
+            padding-bottom: 100px;
+            margin: 0;
+        }
+
+        header {
+            background: linear-gradient(to right, #9b4f96, #4b2f8e);
+            padding: 60px 0;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 4rem;
+            font-weight: 700;
+            color: white;
+        }
+
+        p {
+            font-size: 1.2rem;
+            color: #ddd;
         }
 
         .track-card {
-            background: #1e1e1e;
-            border-radius: 1rem;
+            background: #222;
+            border-radius: 12px;
             overflow: hidden;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.7);
-            transition: transform 0.3s ease-in-out;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.7);
             cursor: pointer;
+            transition: all 0.3s ease;
         }
 
         .track-card:hover {
             transform: scale(1.05);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.8);
+            box-shadow: 0 16px 32px rgba(0, 0, 0, 0.7);
         }
 
-        .track-card .cover {
-            position: relative;
+        .track-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
         }
 
         .track-info {
@@ -38,198 +59,250 @@
         }
 
         .track-info h3 {
-            font-size: 1.25rem;
-            font-weight: 700;
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: white;
         }
 
         .track-info p {
+            color: #aaa;
             font-size: 0.9rem;
-            color: #ccc;
         }
 
-        .audio-player {
+        .sticky-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: #1f1f1f;
+            padding: 15px 30px;
             display: flex;
             align-items: center;
-            justify-content: center;
-            gap: 1rem;
-            margin-top: 2rem;
+            justify-content: space-between;
+            box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.7);
         }
 
-        .audio-player input[type="range"] {
+        .sticky-bar .track-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            color: white;
+        }
+
+        .sticky-bar .track-info h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            max-width: 250px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .sticky-bar .controls {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .sticky-bar button {
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .sticky-bar button:hover {
+            color: #9b4f96;
+        }
+
+        .progress-bar {
             width: 200px;
+            background: #333;
+            border-radius: 5px;
+            height: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .progress-bar input[type="range"] {
+            width: 100%;
+            background: transparent;
+            appearance: none;
+            height: 6px;
+            border-radius: 5px;
+        }
+
+        .progress-bar input[type="range"]::-webkit-slider-runnable-track {
+            background: #444;
+            height: 6px;
+            border-radius: 5px;
+        }
+
+        .progress-bar input[type="range"]::-webkit-slider-thumb {
+            background: #9b4f96;
+            border-radius: 50%;
+            width: 12px;
+            height: 12px;
+            cursor: pointer;
+            border: none;
         }
 
         .social-icons i {
+            color: #9b4f96;
             font-size: 1.5rem;
-            color: #A3A3FF;
-            transition: transform 0.3s;
-            margin: 0 0.5rem;
+            cursor: pointer;
+            transition: color 0.3s;
         }
 
         .social-icons i:hover {
-            transform: scale(1.2);
+            color: #fff;
+        }
+
+        footer {
+            background: #1f1f1f;
+            padding: 30px;
+            text-align: center;
+            color: #888;
         }
 
         .share-btn {
-            background-color: #A3A3FF;
-            color: #111;
+            background-color: #9b4f96;
+            color: white;
+            border: none;
             padding: 0.5rem 1rem;
-            border-radius: 5px;
+            border-radius: 20px;
             cursor: pointer;
-            transition: background 0.3s ease;
+            transition: background-color 0.3s;
         }
 
         .share-btn:hover {
-            background-color: #6c6cff;
+            background-color: #6b2a5c;
         }
+
     </style>
 </head>
 <body>
 
-    <header class="bg-gradient-to-r from-purple-700 to-purple-600 text-center py-12">
-        <h1 class="text-5xl font-extrabold text-white">Soltix</h1>
-        <p class="text-xl text-gray-300 mt-4">Music that speaks louder than words.</p>
-    </header>
+<header>
+    <h1>Soltix</h1>
+    <p>Explore the latest tracks, playlists & artists</p>
+</header>
 
-    <main class="container mx-auto px-4 mt-8">
-        <!-- Artist Intro -->
-        <section class="text-center">
-            <img src="/assets/imgs/78CD93B8-7BAD-4B0F-9883-DFC26F0E37AF.png" alt="Soltix Logo" class="w-32 h-32 mx-auto rounded-full">
-            <h2 class="text-4xl mt-6">Welcome to Soltix's World</h2>
-            <p class="mt-2 text-lg text-gray-400">Explore the latest tracks and unreleased beats.</p>
-        </section>
+<main class="container mx-auto px-4 mt-8">
+    <section class="text-center">
+        <h2 class="text-4xl text-white mb-8">My Tracks</h2>
+        <div id="track-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <!-- Dynamic track cards will go here -->
+        </div>
+    </section>
+</main>
 
-        <!-- Tracks Section -->
-        <section class="mt-12">
-            <h2 class="text-3xl font-semibold text-center text-purple-400">My Tracks</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-6" id="my-tracks"></div>
-        </section>
+<!-- Sticky Music Player -->
+<div class="sticky-bar" id="sticky-player">
+    <div class="track-info" id="track-info">
+        <h3 id="track-title">No Track Playing</h3>
+        <button class="share-btn" id="share-btn">Share</button>
+    </div>
+    <div class="controls">
+        <button id="prev-btn">⏪</button>
+        <button id="play-pause-btn">▶️</button>
+        <button id="next-btn">⏩</button>
+    </div>
+    <div class="progress-bar">
+        <input type="range" id="progress-bar" min="0" max="100" value="0">
+    </div>
+</div>
 
-        <!-- Audio Player Section -->
-        <section class="mt-12">
-            <div class="audio-player" id="audio-player">
-                <!-- Audio Player UI will be injected here dynamically -->
-            </div>
-        </section>
+<footer>
+    <p>&copy; 2024 Soltix. All rights reserved.</p>
+</footer>
 
-        <!-- Share Section -->
-        <section class="mt-12 text-center">
-            <button class="share-btn" id="share-btn">Share this track</button>
-        </section>
-
-        <!-- Follow Section -->
-        <section class="mt-12 text-center">
-            <h2 class="text-3xl font-semibold text-yellow-400">Follow Soltix</h2>
-            <div class="social-icons mt-4">
-                <a href="https://www.spotify.com" target="_blank"><i class="fab fa-spotify"></i></a>
-                <a href="https://www.youtube.com" target="_blank"><i class="fab fa-youtube"></i></a>
-                <a href="https://www.instagram.com" target="_blank"><i class="fab fa-instagram"></i></a>
-                <a href="https://twitter.com" target="_blank"><i class="fab fa-twitter"></i></a>
-            </div>
-        </section>
-    </main>
-
-    <footer class="bg-gray-800 text-center py-6 mt-12">
-        <p class="text-gray-400 text-sm">&copy; 2024 Soltix. All rights reserved.</p>
-    </footer>
-
-    <script>
-        const myTracks = [
-            {
-                id: "pro-anicku",
-                title: "Pro Aničku 🫶🏻",
-                duration: "4:00",
-                album: "Unreleased",
-                cover: "/assets/imgs/IMG_1437.jpeg",
-                audio: "/assets/music/pro-anicku.mp3",
-                description: "A heartfelt track dedicated to Anička, a symbol of love and support.",
-                image: "/assets/imgs/IMG_1437.jpeg"
-            },
-            {
-                id: "lost-boy",
-                title: "Lost Boy",
-                duration: "3:45",
-                album: "Demons",
-                cover: "/assets/imgs/0298035F-E43F-483F-A1C7-996CD4DCD312.jpeg",
-                audio: "/assets/music/Lost Boy.mp3",
-                description: "A song exploring the struggles of finding oneself in a chaotic world.",
-                image: "/assets/imgs/0298035F-E43F-483F-A1C7-996CD4DCD312.jpeg"
-            },
-        ];
-
-        let currentTrack = null;
-
-        function updateOGTags(track) {
-            document.querySelector('meta[property="og:title"]').setAttribute("content", track.title);
-            document.querySelector('meta[property="og:description"]').setAttribute("content", track.description);
-            document.querySelector('meta[property="og:image"]').setAttribute("content", track.image);
+<script>
+    // Example Tracks
+    const tracks = [
+        {
+            id: 'pro-anicku',
+            title: 'Pro Aničku',
+            cover: '/assets/imgs/IMG_1437.jpeg',
+            audio: '/assets/music/pro-anicku.mp3',
+            description: 'A heartfelt track dedicated to Anička.'
+        },
+        {
+            id: 'lost-boy',
+            title: 'Lost Boy',
+            cover: '/assets/imgs/0298035F-E43F-483F-A1C7-996CD4DCD312.jpeg',
+            audio: '/assets/music/Lost Boy.mp3',
+            description: 'A song exploring the struggles of finding oneself.'
         }
+    ];
 
-        function loadTrack(id) {
-            currentTrack = myTracks.find(track => track.id === id);
-            if (!currentTrack) return;
+    let currentTrackIndex = 0;
+    let audioPlayer = new Audio(tracks[currentTrackIndex].audio);
+    let isPlaying = false;
 
-            const audioPlayer = document.getElementById('audio-player');
-            audioPlayer.innerHTML = `
-                <audio id="audio" controls>
-                    <source src="${currentTrack.audio}" type="audio/mp3">
-                </audio>
-                <div class="controls">
-                    <input type="range" id="volume" value="100" min="0" max="100" />
+    // Update track list dynamically
+    function updateTrackList() {
+        const trackList = document.getElementById('track-list');
+        trackList.innerHTML = tracks.map(track => `
+            <div class="track-card" onclick="playTrack('${track.id}')">
+                <img src="${track.cover}" alt="${track.title}">
+                <div class="track-info">
+                    <h3>${track.title}</h3>
+                    <p>${track.description}</p>
                 </div>
-            `;
+            </div>
+        `).join('');
+    }
 
-            // Update OG Meta Tags
-            updateOGTags(currentTrack);
+    // Play selected track
+    function playTrack(trackId) {
+        const track = tracks.find(t => t.id === trackId);
+        if (!track) return;
+        audioPlayer.src = track.audio;
+        audioPlayer.play();
+        isPlaying = true;
+        document.getElementById('track-title').textContent = track.title;
+    }
 
-            // Initialize Volume Control
-            const volumeControl = document.getElementById('volume');
-            volumeControl.addEventListener('input', (event) => {
-                document.getElementById('audio').volume = event.target.value / 100;
-            });
-
-            document.getElementById('audio').play();
+    // Toggle play/pause
+    document.getElementById('play-pause-btn').addEventListener('click', () => {
+        if (isPlaying) {
+            audioPlayer.pause();
+            isPlaying = false;
+            document.getElementById('play-pause-btn').textContent = '▶️';
+        } else {
+            audioPlayer.play();
+            isPlaying = true;
+            document.getElementById('play-pause-btn').textContent = '⏸️';
         }
+    });
 
-        function loadTracks(sectionId, tracks) {
-            const section = document.getElementById(sectionId);
-            section.innerHTML = tracks.map((track) => `
-                <div class="track-card" onclick="loadTrack('${track.id}')">
-                    <div class="cover">
-                        <img src="${track.cover}" alt="${track.title}" class="w-full h-56 object-cover">
-                    </div>
-                    <div class="track-info">
-                        <h3>${track.title}</h3>
-                        <p>Duration: ${track.duration} | Album: ${track.album}</p>
-                        <button class="share-btn" onclick="shareTrack('${track.id}')">Share</button>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        function shareTrack(trackId) {
-            const track = myTracks.find(t => t.id === trackId);
-            const url = window.location.href.split('#')[0] + '#' + track.id;
-            navigator.clipboard.writeText(url).then(() => {
-                alert('Link copied to clipboard! Share it!');
-            });
-        }
-
-        // Read from URL hash to load specific track
-        window.addEventListener('hashchange', () => {
-            const trackId = window.location.hash.replace('#', '');
-            loadTrack(trackId);
+    // Share button functionality
+    document.getElementById('share-btn').addEventListener('click', () => {
+        const track = tracks[currentTrackIndex];
+        const url = `${window.location.href}#${track.id}`;
+        navigator.clipboard.writeText(url).then(() => {
+            alert('Link copied to clipboard!');
         });
+    });
 
-        // Load tracks into the page
-        loadTracks('my-tracks', myTracks);
+    // Update progress bar
+    audioPlayer.addEventListener('timeupdate', () => {
+        const progress = (audioPlayer.currentTime / audioPlayer.duration) * 100;
+        document.getElementById('progress-bar').value = progress;
+    });
 
-        // Check if there's a track in the URL hash
-        if (window.location.hash) {
-            const trackId = window.location.hash.replace('#', '');
-            loadTrack(trackId);
-        }
-    </script>
+    // Handle progress bar click
+    document.getElementById('progress-bar').addEventListener('input', (event) => {
+        const value = event.target.value;
+        audioPlayer.currentTime = (value / 100) * audioPlayer.duration;
+    });
+
+    // Initialize page
+    updateTrackList();
+</script>
 
 </body>
 </html>
