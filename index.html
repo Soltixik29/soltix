@@ -20,6 +20,7 @@
             overflow: hidden;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.7);
             transition: transform 0.3s ease-in-out;
+            cursor: pointer;
         }
 
         .track-card:hover {
@@ -29,25 +30,6 @@
 
         .track-card .cover {
             position: relative;
-        }
-
-        .track-card .play-btn,
-        .track-card .download-btn {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(0, 0, 0, 0.7);
-            color: white;
-            padding: 1rem;
-            border-radius: 50%;
-            cursor: pointer;
-            transition: background 0.3s;
-        }
-
-        .track-card .play-btn:hover,
-        .track-card .download-btn:hover {
-            background: #A3A3FF;
         }
 
         .track-info {
@@ -67,19 +49,14 @@
 
         .audio-player {
             display: flex;
-            flex-direction: column;
             align-items: center;
-            gap: 0.5rem;
-            margin-top: 1rem;
-        }
-
-        .audio-player audio {
-            width: 100%;
-            max-width: 300px;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 2rem;
         }
 
         .audio-player input[type="range"] {
-            width: 100%;
+            width: 200px;
         }
 
         .social-icons i {
@@ -91,6 +68,19 @@
 
         .social-icons i:hover {
             transform: scale(1.2);
+        }
+
+        .share-btn {
+            background-color: #A3A3FF;
+            color: #111;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .share-btn:hover {
+            background-color: #6c6cff;
         }
     </style>
 </head>
@@ -115,10 +105,16 @@
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-6" id="my-tracks"></div>
         </section>
 
-        <!-- Unreleased Tracks Section -->
+        <!-- Audio Player Section -->
         <section class="mt-12">
-            <h2 class="text-3xl font-semibold text-center text-yellow-400">Unreleased Tracks</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-6" id="unreleased-tracks"></div>
+            <div class="audio-player" id="audio-player">
+                <!-- Audio Player UI will be injected here dynamically -->
+            </div>
+        </section>
+
+        <!-- Share Section -->
+        <section class="mt-12 text-center">
+            <button class="share-btn" id="share-btn">Share this track</button>
         </section>
 
         <!-- Follow Section -->
@@ -140,58 +136,99 @@
     <script>
         const myTracks = [
             {
-                title: "Lost Boy",
-                duration: "3:45",
-                album: "Demons",
-                cover: "/assets/imgs/0298035F-E43F-483F-A1C7-996CD4DCD312.jpeg",
-                audio: "/assets/music/Lost Boy.mp3",
-            },
-            {
+                id: "pro-anicku",
                 title: "Pro Aničku 🫶🏻",
                 duration: "4:00",
                 album: "Unreleased",
                 cover: "/assets/imgs/IMG_1437.jpeg",
                 audio: "/assets/music/pro-anicku.mp3",
+                description: "A heartfelt track dedicated to Anička, a symbol of love and support.",
+                image: "/assets/imgs/IMG_1437.jpeg"
+            },
+            {
+                id: "lost-boy",
+                title: "Lost Boy",
+                duration: "3:45",
+                album: "Demons",
+                cover: "/assets/imgs/0298035F-E43F-483F-A1C7-996CD4DCD312.jpeg",
+                audio: "/assets/music/Lost Boy.mp3",
+                description: "A song exploring the struggles of finding oneself in a chaotic world.",
+                image: "/assets/imgs/0298035F-E43F-483F-A1C7-996CD4DCD312.jpeg"
             },
         ];
 
+        let currentTrack = null;
+
+        function updateOGTags(track) {
+            document.querySelector('meta[property="og:title"]').setAttribute("content", track.title);
+            document.querySelector('meta[property="og:description"]').setAttribute("content", track.description);
+            document.querySelector('meta[property="og:image"]').setAttribute("content", track.image);
+        }
+
+        function loadTrack(id) {
+            currentTrack = myTracks.find(track => track.id === id);
+            if (!currentTrack) return;
+
+            const audioPlayer = document.getElementById('audio-player');
+            audioPlayer.innerHTML = `
+                <audio id="audio" controls>
+                    <source src="${currentTrack.audio}" type="audio/mp3">
+                </audio>
+                <div class="controls">
+                    <input type="range" id="volume" value="100" min="0" max="100" />
+                </div>
+            `;
+
+            // Update OG Meta Tags
+            updateOGTags(currentTrack);
+
+            // Initialize Volume Control
+            const volumeControl = document.getElementById('volume');
+            volumeControl.addEventListener('input', (event) => {
+                document.getElementById('audio').volume = event.target.value / 100;
+            });
+
+            document.getElementById('audio').play();
+        }
+
         function loadTracks(sectionId, tracks) {
             const section = document.getElementById(sectionId);
-            section.innerHTML = tracks.map((track, index) => `
-                <div class="track-card">
+            section.innerHTML = tracks.map((track) => `
+                <div class="track-card" onclick="loadTrack('${track.id}')">
                     <div class="cover">
                         <img src="${track.cover}" alt="${track.title}" class="w-full h-56 object-cover">
-                        <div class="play-btn" onclick="playTrack('${track.audio}')">
-                            <i class="fas fa-play"></i>
-                        </div>
-                        <a href="${track.audio}" download class="download-btn">
-                            <i class="fas fa-download"></i>
-                        </a>
                     </div>
                     <div class="track-info">
                         <h3>${track.title}</h3>
                         <p>Duration: ${track.duration} | Album: ${track.album}</p>
+                        <button class="share-btn" onclick="shareTrack('${track.id}')">Share</button>
                     </div>
                 </div>
             `).join('');
         }
 
-        function playTrack(audioPath) {
-            const audio = new Audio(audioPath);
-            audio.play();
-            const playerSection = document.createElement('div');
-            playerSection.classList.add('audio-player');
-            playerSection.innerHTML = `
-                <audio controls>
-                    <source src="${audioPath}" type="audio/mp3">
-                </audio>
-                <input type="range" min="0" max="100" value="50">
-            `;
-            document.body.appendChild(playerSection);
+        function shareTrack(trackId) {
+            const track = myTracks.find(t => t.id === trackId);
+            const url = window.location.href.split('#')[0] + '#' + track.id;
+            navigator.clipboard.writeText(url).then(() => {
+                alert('Link copied to clipboard! Share it!');
+            });
         }
 
+        // Read from URL hash to load specific track
+        window.addEventListener('hashchange', () => {
+            const trackId = window.location.hash.replace('#', '');
+            loadTrack(trackId);
+        });
+
+        // Load tracks into the page
         loadTracks('my-tracks', myTracks);
-        loadTracks('unreleased-tracks', myTracks);
+
+        // Check if there's a track in the URL hash
+        if (window.location.hash) {
+            const trackId = window.location.hash.replace('#', '');
+            loadTrack(trackId);
+        }
     </script>
 
 </body>
