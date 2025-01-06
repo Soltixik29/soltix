@@ -1,4 +1,4 @@
-<<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -16,7 +16,6 @@
             overflow-x: hidden;
         }
 
-        /* Header */
         header {
             background-color: #1a1a1a;
             padding: 40px 20px;
@@ -191,7 +190,21 @@
             border: none;
         }
 
-        /* Social Share Button */
+        .download-btn {
+            background-color: #1DB954;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.3s;
+        }
+
+        .download-btn:hover {
+            background-color: #1AA34A;
+        }
+
         .share-btn {
             background-color: #1DB954;
             color: white;
@@ -207,7 +220,6 @@
             background-color: #1AA34A;
         }
 
-        /* Responsive Layout */
         .grid-container {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
@@ -223,20 +235,8 @@
     <p>Discover your next favorite tracks</p>
 </header>
 
-<main class="grid-container">
-    <div class="track-card" onclick="playTrack('pro-anicku')">
-        <img src="https://example.com/track1.jpg" alt="Pro Anicku">
-        <div class="track-info">
-            <h3>Pro Aničku</h3>
-        </div>
-    </div>
-
-    <div class="track-card" onclick="playTrack('lost-boy')">
-        <img src="https://example.com/track2.jpg" alt="Lost Boy">
-        <div class="track-info">
-            <h3>Lost Boy</h3>
-        </div>
-    </div>
+<main id="track-list" class="grid-container">
+    <!-- Tracks will be dynamically loaded here -->
 </main>
 
 <!-- Sticky Music Player -->
@@ -245,6 +245,7 @@
         <img id="track-cover" src="https://example.com/track1.jpg" alt="Cover">
         <h3 id="track-title">No Track Playing</h3>
         <button id="share-btn" class="share-btn"><i class="fas fa-share-alt"></i></button>
+        <button id="download-btn" class="download-btn"><i class="fas fa-download"></i></button>
     </div>
 
     <div class="controls">
@@ -259,90 +260,119 @@
 
     <div class="volume-control">
         <input type="range" id="volume-control" min="0" max="1" step="0.01" value="0.5">
+        <i class="fas fa-volume-up"></i>
     </div>
+
+    <div id="track-time">0:00 / 3:30</div>
 </div>
 
 <script>
-    // Track Data
+    // Define the tracks in JSON format
     const tracks = [
         {
-            id: 'pro-anicku',
-            title: 'Pro Aničku',
-            cover: 'https://example.com/track1.jpg',
-            audio: 'https://example.com/pro-anicku.mp3',
-            description: 'A heartfelt track dedicated to Anička.'
+            id: "pro-anicku",
+            title: "Pro Aničku",
+            cover: "/assets/imgs/IMG_1437.jpeg",
+            audio: "/assets/music/pro-anicku.mp3",
+            description: "A heartfelt track dedicated to Anička."
         },
         {
-            id: 'lost-boy',
-            title: 'Lost Boy',
-            cover: 'https://example.com/track2.jpg',
-            audio: 'https://example.com/lost-boy.mp3',
-            description: 'A song exploring the struggles of finding oneself.'
+            id: "lost-boy",
+            title: "Lost Boy",
+            cover: "assets/imgs/0298035F-E43F-483F-A1C7-996CD4DCD312.jpeg",
+            audio: "/assets/music/lost_boy.mp3",
+            description: "A song exploring the struggles of finding oneself."
         }
     ];
+
+    // Load tracks dynamically into the page
+    const trackListElement = document.getElementById("track-list");
+    tracks.forEach((track) => {
+        const trackCard = document.createElement("div");
+        trackCard.classList.add("track-card");
+        trackCard.onclick = () => playTrack(track.id);
+
+        trackCard.innerHTML = `
+            <img src="${track.cover}" alt="${track.title}">
+            <div class="track-info">
+                <h3>${track.title}</h3>
+                <p>${track.description}</p>
+            </div>
+        `;
+        trackListElement.appendChild(trackCard);
+    });
 
     let currentTrackIndex = 0;
     let audioPlayer = new Audio(tracks[currentTrackIndex].audio);
     let isPlaying = false;
 
-    // Play track by ID
     function playTrack(trackId) {
-        const track = tracks.find(t => t.id === trackId);
+        const track = tracks.find((t) => t.id === trackId);
         if (!track) return;
         audioPlayer.src = track.audio;
         audioPlayer.play();
         isPlaying = true;
-        document.getElementById('track-title').textContent = track.title;
-        document.getElementById('track-cover').src = track.cover;
+        document.getElementById("track-title").textContent = track.title;
+        document.getElementById("track-cover").src = track.cover;
         updateShareButton(trackId);
+        updateDownloadButton(track.audio);
     }
 
-    // Update Share Button with track link
     function updateShareButton(trackId) {
         const shareLink = `${window.location.href}#${trackId}`;
-        document.getElementById('share-btn').onclick = () => {
+        document.getElementById("share-btn").onclick = () => {
             navigator.clipboard.writeText(shareLink).then(() => {
-                alert('Link copied to clipboard!');
+                alert("Link copied to clipboard!");
             });
         };
     }
 
-    // Play/Pause button
-    document.getElementById('play-pause-btn').addEventListener('click', () => {
+    function updateDownloadButton(downloadLink) {
+        document.getElementById("download-btn").onclick = () => {
+            window.open(downloadLink, "_blank");
+        };
+    }
+
+    document.getElementById("play-pause-btn").addEventListener("click", () => {
         if (isPlaying) {
             audioPlayer.pause();
             isPlaying = false;
-            document.getElementById('play-pause-btn').innerHTML = '<i class="fas fa-play"></i>';
+            document.getElementById("play-pause-btn").innerHTML = '<i class="fas fa-play"></i>';
         } else {
             audioPlayer.play();
             isPlaying = true;
-            document.getElementById('play-pause-btn').innerHTML = '<i class="fas fa-pause"></i>';
+            document.getElementById("play-pause-btn").innerHTML = '<i class="fas fa-pause"></i>';
         }
     });
 
-    // Update Progress Bar
-    audioPlayer.addEventListener('timeupdate', () => {
+    audioPlayer.addEventListener("timeupdate", () => {
         const progress = (audioPlayer.currentTime / audioPlayer.duration) * 100;
-        document.getElementById('progress-bar').value = progress;
+        document.getElementById("progress-bar").value = progress;
+        const currentTime = formatTime(audioPlayer.currentTime);
+        const duration = formatTime(audioPlayer.duration);
+        document.getElementById("track-time").textContent = `${currentTime} / ${duration}`;
     });
 
-    // Handle Progress Bar Click
-    document.getElementById('progress-bar').addEventListener('input', (e) => {
+    document.getElementById("progress-bar").addEventListener("input", (e) => {
         audioPlayer.currentTime = (e.target.value / 100) * audioPlayer.duration;
     });
 
-    // Handle Volume Control
-    document.getElementById('volume-control').addEventListener('input', (e) => {
+    document.getElementById("volume-control").addEventListener("input", (e) => {
         audioPlayer.volume = e.target.value;
     });
 
-    // Track Navigation (Prev/Next buttons)
-    document.getElementById('prev-btn').addEventListener('click', () => {
+    function formatTime(seconds) {
+        const minutes = Math.floor(seconds / 60);
+        const remainingSeconds = Math.floor(seconds % 60);
+        return `${minutes}:${remainingSeconds < 10 ? "0" + remainingSeconds : remainingSeconds}`;
+    }
+
+    document.getElementById("prev-btn").addEventListener("click", () => {
         currentTrackIndex = (currentTrackIndex - 1 + tracks.length) % tracks.length;
         playTrack(tracks[currentTrackIndex].id);
     });
 
-    document.getElementById('next-btn').addEventListener('click', () => {
+    document.getElementById("next-btn").addEventListener("click", () => {
         currentTrackIndex = (currentTrackIndex + 1) % tracks.length;
         playTrack(tracks[currentTrackIndex].id);
     });
