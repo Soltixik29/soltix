@@ -10,22 +10,23 @@
     <style>
         body {
             font-family: 'Roboto', sans-serif;
-            background-color: #121212;
+            background-color: #1e1e2f;
             margin: 0;
             color: white;
             overflow-x: hidden;
         }
 
         header {
-            background-color: #1a1a1a;
+            background-color: #2c2c44;
             padding: 40px 20px;
             text-align: center;
+            animation: fadeIn 1s ease-in-out;
         }
 
         header h1 {
             font-size: 3rem;
             font-weight: 700;
-            color: white;
+            color: #9f7aea;
         }
 
         header p {
@@ -33,13 +34,20 @@
             font-size: 1rem;
         }
 
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
         .track-card {
-            background-color: #282828;
+            background-color: #2c2c44;
             border-radius: 8px;
             box-shadow: 0 8px 16px rgba(0, 0, 0, 0.7);
             cursor: pointer;
             transition: all 0.3s ease;
             overflow: hidden;
+            display: flex;
+            flex-direction: column;
         }
 
         .track-card:hover {
@@ -69,14 +77,25 @@
             font-size: 0.9rem;
         }
 
+        .track-info .artist {
+            color: #9f7aea;
+            font-size: 0.9rem;
+        }
+
+        .track-info .duration {
+            color: #bbb;
+            font-size: 0.8rem;
+        }
+
         .sticky-bar {
             position: fixed;
             bottom: 0;
             left: 0;
             width: 100%;
-            background-color: #121212;
-            padding: 20px 30px;
+            background-color: #1e1e2f;
+            padding: 10px 20px;
             display: flex;
+            flex-wrap: wrap;
             justify-content: space-between;
             align-items: center;
             box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.7);
@@ -89,6 +108,7 @@
             align-items: center;
             gap: 15px;
             color: white;
+            flex: 1 1 40%;
         }
 
         .sticky-bar .track-info img {
@@ -111,6 +131,8 @@
             display: flex;
             align-items: center;
             gap: 15px;
+            flex: 1 1 20%;
+            justify-content: center;
         }
 
         .controls button {
@@ -123,15 +145,14 @@
         }
 
         .controls button:hover {
-            color: #1DB954;
+            color: #9f7aea;
         }
 
         .progress-bar {
-            width: 200px;
-            height: 6px;
-            background: #333;
-            border-radius: 5px;
-            position: relative;
+            flex: 1 1 40%;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
         .progress-bar input[type="range"] {
@@ -140,8 +161,6 @@
             appearance: none;
             height: 6px;
             border-radius: 5px;
-            position: absolute;
-            top: 0;
         }
 
         .progress-bar input[type="range"]::-webkit-slider-runnable-track {
@@ -151,7 +170,7 @@
         }
 
         .progress-bar input[type="range"]::-webkit-slider-thumb {
-            background: #1DB954;
+            background: #9f7aea;
             border-radius: 50%;
             width: 12px;
             height: 12px;
@@ -159,26 +178,34 @@
             border: none;
         }
 
-        .download-btn {
-            background-color: #1DB954;
-            color: white;
-            border: none;
-            padding: 8px 12px;
-            border-radius: 30px;
-            cursor: pointer;
-            font-size: 1rem;
-            transition: background-color 0.3s;
-        }
-
-        .download-btn:hover {
-            background-color: #1AA34A;
-        }
-
         .grid-container {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
             gap: 20px;
             padding: 20px;
+        }
+
+        .grid-container .track-card {
+            display: flex;
+            flex-direction: column;
+        }
+
+        @media (max-width: 768px) {
+            .sticky-bar {
+                flex-wrap: wrap;
+                padding: 10px;
+            }
+
+            .sticky-bar .track-info {
+                flex: 1 1 100%;
+                justify-content: center;
+                text-align: center;
+            }
+
+            .controls, .progress-bar {
+                flex: 1 1 100%;
+                justify-content: center;
+            }
         }
     </style>
 </head>
@@ -196,9 +223,11 @@
 <div class="sticky-bar">
     <div class="track-info">
         <img id="track-cover" src="https://example.com/track1.jpg" alt="Cover">
-        <h3 id="track-title">No Track Playing</h3>
-        <button id="share-btn" class="share-btn"><i class="fas fa-share-alt"></i></button>
-        <a id="download-link" class="download-btn" download><i class="fas fa-download"></i></a>
+        <div>
+            <h3 id="track-title">No Track Playing</h3>
+            <p class="artist" id="track-artist">Unknown Artist</p>
+            <p class="duration" id="track-duration">0:00</p>
+        </div>
     </div>
 
     <div class="controls">
@@ -210,49 +239,26 @@
     <div class="progress-bar">
         <input type="range" id="progress-bar" min="0" max="100" value="0">
     </div>
-
-    <div id="track-time">0:00 / 3:30</div>
 </div>
 
 <script>
     const tracks = [
-        { id: "pro-anicku", title: "Pro Aničku", cover: "/assets/imgs/IMG_1437.jpeg", audio: "/assets/music/pro-anicku.mp3" },
-        { id: "lost-boy", title: "Lost Boy", cover: "/assets/imgs/0298035F-E43F-483F-A1C7-996CD4DCD312.jpeg", audio: "/assets/music/Lost Boy.mp3" }
+        { id: "pro-anicku", title: "Pro Aničku", artist: "Soltix", cover: "/assets/imgs/IMG_1437.jpeg", audio: "/assets/music/pro-anicku.mp3", duration: "3:15" },
+        { id: "lost-boy", title: "Lost Boy", artist: "Soltix", cover: "/assets/imgs/0298035F-E43F-483F-A1C7-996CD4DCD312.jpeg", audio: "/assets/music/Lost Boy.mp3", duration: "4:02" }
     ];
 
     let currentTrackIndex = 0;
     const audioPlayer = new Audio(tracks[currentTrackIndex].audio);
-
-    function loadTracks() {
-        const trackList = document.getElementById('track-list');
-        tracks.forEach((track, index) => {
-            const trackCard = document.createElement('div');
-            trackCard.className = 'track-card';
-            trackCard.innerHTML = `
-                <img src="${track.cover}" alt="${track.title}">
-                <div class="track-info">
-                    <h3>${track.title}</h3>
-                </div>
-            `;
-            trackCard.addEventListener('click', () => playTrack(index));
-            trackList.appendChild(trackCard);
-        });
-    }
 
     function playTrack(index) {
         currentTrackIndex = index;
         const track = tracks[currentTrackIndex];
         audioPlayer.src = track.audio;
         document.getElementById("track-title").textContent = track.title;
+        document.getElementById("track-artist").textContent = track.artist;
         document.getElementById("track-cover").src = track.cover;
-        document.getElementById("download-link").href = track.audio;
+        document.getElementById("track-duration").textContent = track.duration;
         audioPlayer.play();
-        updatePlayPauseButton();
-    }
-
-    function updatePlayPauseButton() {
-        const playPauseBtn = document.getElementById("play-pause-btn");
-        playPauseBtn.innerHTML = audioPlayer.paused ? '<i class="fas fa-play"></i>' : '<i class="fas fa-pause"></i>';
     }
 
     audioPlayer.addEventListener("ended", () => {
@@ -260,41 +266,6 @@
         playTrack(currentTrackIndex);
     });
 
-    audioPlayer.addEventListener("timeupdate", () => {
-        const progressBar = document.getElementById("progress-bar");
-        const trackTime = document.getElementById("track-time");
-        progressBar.value = (audioPlayer.currentTime / audioPlayer.duration) * 100 || 0;
-        const currentMinutes = Math.floor(audioPlayer.currentTime / 60);
-        const currentSeconds = Math.floor(audioPlayer.currentTime % 60).toString().padStart(2, '0');
-        const totalMinutes = Math.floor(audioPlayer.duration / 60);
-        const totalSeconds = Math.floor(audioPlayer.duration % 60).toString().padStart(2, '0');
-        trackTime.textContent = `${currentMinutes}:${currentSeconds} / ${totalMinutes}:${totalSeconds}`;
-    });
-
-    document.getElementById("play-pause-btn").addEventListener("click", () => {
-        if (audioPlayer.paused) {
-            audioPlayer.play();
-        } else {
-            audioPlayer.pause();
-        }
-        updatePlayPauseButton();
-    });
-
-    document.getElementById("prev-btn").addEventListener("click", () => {
-        currentTrackIndex = (currentTrackIndex - 1 + tracks.length) % tracks.length;
-        playTrack(currentTrackIndex);
-    });
-
-    document.getElementById("next-btn").addEventListener("click", () => {
-        currentTrackIndex = (currentTrackIndex + 1) % tracks.length;
-        playTrack(currentTrackIndex);
-    });
-
-    document.getElementById("progress-bar").addEventListener("input", (e) => {
-        audioPlayer.currentTime = (e.target.value / 100) * audioPlayer.duration;
-    });
-
-    loadTracks();
     playTrack(currentTrackIndex);
 </script>
 
