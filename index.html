@@ -52,7 +52,6 @@
             transition: all 0.3s ease;
             overflow: hidden;
             position: relative;
-            height: 100%;
         }
 
         .track-card:hover {
@@ -85,8 +84,16 @@
         }
 
         .verified {
-            color: #1DB954;
+            background: linear-gradient(90deg, #9b30b1, #bb4fff);
+            -webkit-background-clip: text;
+            color: transparent;
             font-size: 1rem;
+            margin-left: 5px;
+        }
+
+        .crown-icon {
+            color: gold;
+            font-size: 1.2rem;
             margin-left: 5px;
         }
 
@@ -98,7 +105,7 @@
             background-color: #1a1a1a;
             padding: 15px 20px;
             display: flex;
-            justify-content: space-between;
+            flex-direction: column;
             align-items: center;
             box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.7);
             z-index: 999;
@@ -130,6 +137,12 @@
             overflow: hidden;
         }
 
+        .sticky-bar .track-info p {
+            font-size: 0.8rem;
+            color: #bbb;
+            margin-left: 10px;
+        }
+
         .controls {
             display: flex;
             align-items: center;
@@ -154,10 +167,17 @@
             color: #1DB954;
         }
 
+        .active-shuffle {
+            color: #FFD700;
+        }
+
+        .active-repeat {
+            color: #FF1493;
+        }
+
         .progress-bar {
-            flex: 1;
-            min-width: 200px;
-            margin: 0 10px;
+            width: 100%;
+            margin: 10px 0;
         }
 
         .progress-bar input[type="range"] {
@@ -212,7 +232,10 @@
 <div class="sticky-bar">
     <div class="track-info">
         <img id="track-cover" src="https://example.com/track1.jpg" alt="Cover">
-        <h3 id="track-title">No Track Playing</h3>
+        <div>
+            <h3 id="track-title">No Track Playing</h3>
+            <p id="track-artist"></p>
+        </div>
     </div>
 
     <div class="controls">
@@ -238,6 +261,29 @@
         { id: "rizz", title: "Rizz", artist: "Soltix", verified: true, duration: "2:13", cover: "/assets/imgs/BC1A09C6-4A99-4F27-9879-F66DAE6264DF.jpeg", audio: "/assets/music/Rizz.mp3" }
     ];
 
+    const trackListElement = document.getElementById("track-list");
+
+    // Render the track cards
+    function renderTrackCards() {
+        tracks.forEach(track => {
+            const trackCard = document.createElement("div");
+            trackCard.classList.add("track-card");
+            trackCard.innerHTML = `
+                <img src="${track.cover}" alt="${track.title}">
+                <div class="track-info">
+                    <h3>${track.title}</h3>
+                    <p>${track.artist}</p>
+                    ${track.verified ? '<span class="verified"><i class="fas fa-crown crown-icon"></i></span>' : ''}
+                </div>
+            `;
+            trackCard.addEventListener("click", () => playTrack(track.id));
+            trackListElement.appendChild(trackCard);
+        });
+    }
+
+    // Initialize track list
+    renderTrackCards();
+
     let isShuffle = false;
     let isRepeat = false;
     let currentTrackIndex = 0;
@@ -248,13 +294,17 @@
     const playPauseBtn = document.getElementById("play-pause-btn");
 
     shuffleBtn.addEventListener("click", () => {
+        if (isRepeat) return; // Don't toggle shuffle if repeat is active
         isShuffle = !isShuffle;
-        shuffleBtn.classList.toggle("active", isShuffle);
+        shuffleBtn.classList.toggle("active-shuffle", isShuffle);
+        if (isShuffle) repeatBtn.classList.remove("active-repeat"); // Disable repeat when shuffle is on
     });
 
     repeatBtn.addEventListener("click", () => {
+        if (isShuffle) return; // Don't toggle repeat if shuffle is active
         isRepeat = !isRepeat;
-        repeatBtn.classList.toggle("active", isRepeat);
+        repeatBtn.classList.toggle("active-repeat", isRepeat);
+        if (isRepeat) shuffleBtn.classList.remove("active-shuffle"); // Disable shuffle when repeat is on
     });
 
     function playTrack(index) {
@@ -263,6 +313,7 @@
         audioPlayer.src = track.audio;
         document.getElementById("track-title").textContent = track.title;
         document.getElementById("track-cover").src = track.cover;
+        document.getElementById("track-artist").innerHTML = `${track.artist} <span class="verified"><i class="fas fa-crown crown-icon"></i></span>`;
         audioPlayer.play();
         playPauseBtn.innerHTML = `<i class="fas fa-pause"></i>`;
     }
