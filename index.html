@@ -85,7 +85,7 @@
         }
 
         .verified {
-            color: #9b30b1;  /* Purple verified icon */
+            color: #1DB954;
             font-size: 1rem;
             margin-left: 5px;
         }
@@ -96,9 +96,8 @@
             left: 0;
             width: 100%;
             background-color: #1a1a1a;
-            padding: 10px 15px;
+            padding: 15px 20px;
             display: flex;
-            flex-wrap: wrap;
             justify-content: space-between;
             align-items: center;
             box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.7);
@@ -134,8 +133,7 @@
         .controls {
             display: flex;
             align-items: center;
-            gap: 15px;
-            flex: 1;
+            gap: 20px;
             justify-content: center;
         }
 
@@ -149,6 +147,10 @@
         }
 
         .controls button:hover {
+            color: #1DB954;
+        }
+
+        .active {
             color: #1DB954;
         }
 
@@ -194,7 +196,6 @@
             font-size: 0.8rem;
             color: #888;
         }
-
     </style>
 </head>
 <body>
@@ -212,16 +213,14 @@
     <div class="track-info">
         <img id="track-cover" src="https://example.com/track1.jpg" alt="Cover">
         <h3 id="track-title">No Track Playing</h3>
-        <button id="share-btn" class="share-btn"><i class="fas fa-share-alt"></i></button>
-        <a id="download-link" class="download-btn" download><i class="fas fa-download"></i></a>
     </div>
 
     <div class="controls">
-        <button id="repeat-btn"><i class="fas fa-redo"></i></button>
-        <button id="shuffle-btn"><i class="fas fa-random"></i></button>
+        <button id="shuffle-btn" title="Shuffle"><i class="fas fa-random"></i></button>
         <button id="prev-btn"><i class="fas fa-backward"></i></button>
         <button id="play-pause-btn"><i class="fas fa-play"></i></button>
         <button id="next-btn"><i class="fas fa-forward"></i></button>
+        <button id="repeat-btn" title="Repeat"><i class="fas fa-redo-alt"></i></button>
     </div>
 
     <div class="progress-bar">
@@ -239,32 +238,24 @@
         { id: "rizz", title: "Rizz", artist: "Soltix", verified: true, duration: "2:13", cover: "/assets/imgs/BC1A09C6-4A99-4F27-9879-F66DAE6264DF.jpeg", audio: "/assets/music/Rizz.mp3" }
     ];
 
-    const trackList = document.getElementById("track-list");
-
-    tracks.forEach((track, index) => {
-        const trackCard = document.createElement("div");
-        trackCard.className = "track-card";
-
-        const verifiedIcon = track.verified ? `<i class="fas fa-check-circle verified"></i>` : "";
-
-        trackCard.innerHTML = `
-            <img src="${track.cover}" alt="${track.title}" onclick="playTrack(${index})">
-            <div class="track-info">
-                <h3>${track.title}</h3>
-                <p>${track.artist} ${verifiedIcon}</p>
-                
-                <div class="track-meta">
-                    <span>${track.duration}</span>
-                    <button onclick="playTrack(${index})"><i class='fas fa-play'></i></button>
-                </div>
-            </div>
-        `;
-
-        trackList.appendChild(trackCard);
-    });
-
+    let isShuffle = false;
+    let isRepeat = false;
     let currentTrackIndex = 0;
     const audioPlayer = new Audio(tracks[currentTrackIndex].audio);
+
+    const shuffleBtn = document.getElementById("shuffle-btn");
+    const repeatBtn = document.getElementById("repeat-btn");
+    const playPauseBtn = document.getElementById("play-pause-btn");
+
+    shuffleBtn.addEventListener("click", () => {
+        isShuffle = !isShuffle;
+        shuffleBtn.classList.toggle("active", isShuffle);
+    });
+
+    repeatBtn.addEventListener("click", () => {
+        isRepeat = !isRepeat;
+        repeatBtn.classList.toggle("active", isRepeat);
+    });
 
     function playTrack(index) {
         currentTrackIndex = index;
@@ -272,18 +263,21 @@
         audioPlayer.src = track.audio;
         document.getElementById("track-title").textContent = track.title;
         document.getElementById("track-cover").src = track.cover;
-        document.getElementById("download-link").href = track.audio;
         audioPlayer.play();
-        document.getElementById("play-pause-btn").innerHTML = `<i class="fas fa-pause"></i>`;
+        playPauseBtn.innerHTML = `<i class="fas fa-pause"></i>`;
     }
 
     function pauseTrack() {
         audioPlayer.pause();
-        document.getElementById("play-pause-btn").innerHTML = `<i class="fas fa-play"></i>`;
+        playPauseBtn.innerHTML = `<i class="fas fa-play"></i>`;
     }
 
     function nextTrack() {
-        currentTrackIndex = (currentTrackIndex + 1) % tracks.length;
+        if (isShuffle) {
+            currentTrackIndex = Math.floor(Math.random() * tracks.length);
+        } else {
+            currentTrackIndex = (currentTrackIndex + 1) % tracks.length;
+        }
         playTrack(currentTrackIndex);
     }
 
@@ -293,13 +287,19 @@
     }
 
     audioPlayer.addEventListener("ended", () => {
-        nextTrack();
+        if (isRepeat) {
+            playTrack(currentTrackIndex);
+        } else {
+            nextTrack();
+        }
     });
+
+    playTrack(currentTrackIndex);
 
     document.getElementById("play-pause-btn").addEventListener("click", () => {
         if (audioPlayer.paused) {
             audioPlayer.play();
-            document.getElementById("play-pause-btn").innerHTML = `<i class="fas fa-pause"></i>`;
+            playPauseBtn.innerHTML = `<i class="fas fa-pause"></i>`;
         } else {
             pauseTrack();
         }
@@ -323,8 +323,6 @@
         document.getElementById("track-time").textContent = `${formatTime(audioPlayer.currentTime)} / ${formatTime(audioPlayer.duration)}`;
         document.getElementById("progress-bar").value = (audioPlayer.currentTime / audioPlayer.duration) * 100;
     });
-
-    playTrack(currentTrackIndex);
 </script>
 
 </body>
