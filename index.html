@@ -9,7 +9,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body {
-            font-family: 'Poppins', sans-serif; /* Modern font */
+            font-family: 'Poppins', sans-serif;
             background-color: #121212;
             margin: 0;
             color: white;
@@ -25,7 +25,7 @@
 
         @keyframes gradient-animation {
             0% {
-                background: linear-gradient(45deg, #6a11cb, #9b30b1); /* Purple shades */
+                background: linear-gradient(45deg, #6a11cb, #9b30b1);
             }
             100% {
                 background: linear-gradient(45deg, #bb4fff, #7027e8);
@@ -85,7 +85,7 @@
         }
 
         .verified {
-            color: #1DB954; /* Greenish blue for the verified icon */
+            color: #1DB954;
             font-size: 1rem;
             margin-left: 5px;
         }
@@ -247,6 +247,7 @@
             <div class="track-info">
                 <h3>${track.title}</h3>
                 <p>${track.artist} ${verifiedIcon}</p>
+                <p class="track-duration">${track.duration}</p>
                 <div class="track-meta">
                     <span>${track.duration}</span>
                     <button onclick="playTrack(${index})"><i class='fas fa-play'></i></button>
@@ -268,19 +269,39 @@
         document.getElementById("track-cover").src = track.cover;
         document.getElementById("download-link").href = track.audio;
         audioPlayer.play();
+        document.getElementById("play-pause-btn").innerHTML = `<i class="fas fa-pause"></i>`;
+    }
+
+    function pauseTrack() {
+        audioPlayer.pause();
+        document.getElementById("play-pause-btn").innerHTML = `<i class="fas fa-play"></i>`;
+    }
+
+    function nextTrack() {
+        currentTrackIndex = (currentTrackIndex + 1) % tracks.length;
+        playTrack(currentTrackIndex);
+    }
+
+    function prevTrack() {
+        currentTrackIndex = (currentTrackIndex - 1 + tracks.length) % tracks.length;
+        playTrack(currentTrackIndex);
     }
 
     audioPlayer.addEventListener("ended", () => {
-        currentTrackIndex = (currentTrackIndex + 1) % tracks.length;
-        playTrack(currentTrackIndex);
+        nextTrack();
     });
 
-    // Update progress bar while track is playing
-    audioPlayer.ontimeupdate = () => {
-        const progress = (audioPlayer.currentTime / audioPlayer.duration) * 100;
-        document.getElementById("progress-bar").value = progress;
-        document.getElementById("track-time").textContent = `${formatTime(audioPlayer.currentTime)} / ${formatTime(audioPlayer.duration)}`;
-    };
+    document.getElementById("play-pause-btn").addEventListener("click", () => {
+        if (audioPlayer.paused) {
+            audioPlayer.play();
+            document.getElementById("play-pause-btn").innerHTML = `<i class="fas fa-pause"></i>`;
+        } else {
+            pauseTrack();
+        }
+    });
+
+    document.getElementById("next-btn").addEventListener("click", nextTrack);
+    document.getElementById("prev-btn").addEventListener("click", prevTrack);
 
     document.getElementById("progress-bar").addEventListener("input", (e) => {
         const seekTime = (audioPlayer.duration * e.target.value) / 100;
@@ -292,6 +313,11 @@
         const secs = Math.floor(seconds % 60);
         return `${mins}:${secs < 10 ? "0" : ""}${secs}`;
     }
+
+    audioPlayer.addEventListener("timeupdate", () => {
+        document.getElementById("track-time").textContent = `${formatTime(audioPlayer.currentTime)} / ${formatTime(audioPlayer.duration)}`;
+        document.getElementById("progress-bar").value = (audioPlayer.currentTime / audioPlayer.duration) * 100;
+    });
 
     playTrack(currentTrackIndex);
 </script>
