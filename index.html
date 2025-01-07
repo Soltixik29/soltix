@@ -4,12 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Soltix | Music Player</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Lobster&family=Rock+Salt&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Rock+Salt&display=swap" rel="stylesheet">
     <script src="https://kit.fontawesome.com/a1dfa2d810.js" crossorigin="anonymous"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body {
-            font-family: 'Rock Salt', cursive; /* Graffiti-style font */
+            font-family: 'Poppins', sans-serif; /* Modern font */
             background-color: #121212;
             margin: 0;
             color: white;
@@ -18,22 +18,22 @@
 
         header {
             background: linear-gradient(45deg, #6a11cb, #2575fc);
-            animation: gradient-animation 6s infinite alternate;
+            animation: gradient-animation 8s infinite alternate;
             padding: 40px 20px;
             text-align: center;
         }
 
         @keyframes gradient-animation {
             0% {
-                background: linear-gradient(45deg, #6a11cb, #2575fc);
+                background: linear-gradient(45deg, #6a11cb, #9b30b1); /* Purple shades */
             }
             100% {
-                background: linear-gradient(45deg, #ff6a00, #ee0979);
+                background: linear-gradient(45deg, #bb4fff, #7027e8);
             }
         }
 
         header h1 {
-            font-family: 'Lobster', cursive;
+            font-family: 'Rock Salt', cursive;
             font-size: 3rem;
             font-weight: 700;
             color: white;
@@ -229,8 +229,8 @@
 
 <script>
     const tracks = [
-        { id: "pro-anicku", title: "Pro Aničku", artist: "Artist 1", verified: true, duration: "3:30", cover: "/assets/imgs/IMG_1437.jpeg", audio: "/assets/music/pro-anicku.mp3" },
-        { id: "lost-boy", title: "Lost Boy", artist: "Artist 2", verified: false, duration: "4:10", cover: "/assets/imgs/0298035F-E43F-483F-A1C7-996CD4DCD312.jpeg", audio: "/assets/music/Lost Boy.mp3" }
+        { id: "pro-anicku", title: "Pro Aničku", artist: "Soltix", verified: true, duration: "3:30", cover: "/assets/imgs/IMG_1437.jpeg", audio: "/assets/music/pro-anicku.mp3" },
+        { id: "lost-boy", title: "Lost Boy", artist: "Soltix", verified: true, duration: "4:10", cover: "/assets/imgs/0298035F-E43F-483F-A1C7-996CD4DCD312.jpeg", audio: "/assets/music/Lost Boy.mp3" }
     ];
 
     const trackList = document.getElementById("track-list");
@@ -273,6 +273,19 @@
         currentTrackIndex = (currentTrackIndex + 1) % tracks.length;
         playTrack(currentTrackIndex);
     });
+
+    // Update progress bar while track is playing
+    audioPlayer.ontimeupdate = () => {
+        const progress = (audioPlayer.currentTime / audioPlayer.duration) * 100;
+        document.getElementById("progress-bar").value = progress;
+        document.getElementById("track-time").textContent = `${formatTime(audioPlayer.currentTime)} / ${formatTime(audioPlayer.duration)}`;
+    };
+
+    function formatTime(seconds) {
+        const mins = Math.floor(seconds / 60);
+        const secs = Math.floor(seconds % 60);
+        return `${mins}:${secs < 10 ? "0" : ""}${secs}`;
+    }
 
     playTrack(currentTrackIndex);
 </script>
