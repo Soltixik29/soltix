@@ -159,10 +159,6 @@
             color: #bb4fff; /* Purple hover effect */
         }
 
-        .active {
-            color: #bb4fff;
-        }
-
         .active-repeat {
             color: #bb4fff; /* Purple active repeat */
         }
@@ -221,6 +217,21 @@
             font-size: 0.8rem;
             color: #888;
         }
+
+        .download-btn {
+            background-color: #9b30b1;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            text-align: center;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .download-btn:hover {
+            background-color: #bb4fff;
+        }
     </style>
 </head>
 <body>
@@ -255,7 +266,9 @@
         <input type="range" id="progress-bar" min="0" max="100" value="0">
     </div>
 
-    <div id="track-time">0:00 / 3:30</div>
+    <div class="track-times">
+        <span id="current-time">0:00</span> / <span id="duration-time">3:30</span>
+    </div>
 </div>
 
 <script>
@@ -279,6 +292,7 @@
                     <h3>${track.title}</h3>
                     <p>${track.artist}</p>
                     ${track.verified ? '<span class="verified"><i class="fas fa-check"></i></span>' : ''}
+                    <button class="download-btn" onclick="downloadTrack('${track.audio}')">Download</button>
                 </div>
             `;
             trackCard.addEventListener("click", () => playTrack(track.id));
@@ -308,6 +322,7 @@
         document.getElementById("track-title").textContent = track.title;
         document.getElementById("track-cover").src = track.cover;
         document.getElementById("track-artist").innerHTML = `${track.artist} <span class="verified"><i class="fas fa-check"></i></span>`;
+        document.getElementById("duration-time").textContent = track.duration;
         audioPlayer.play();
         playPauseBtn.innerHTML = `<i class="fas fa-pause"></i>`;
     }
@@ -361,10 +376,18 @@
     }
 
     audioPlayer.addEventListener("timeupdate", () => {
-        document.getElementById("track-time").textContent = `${formatTime(audioPlayer.currentTime)} / ${formatTime(audioPlayer.duration)}`;
+        document.getElementById("current-time").textContent = formatTime(audioPlayer.currentTime);
+        document.getElementById("track-time").textContent = formatTime(audioPlayer.duration);
         document.getElementById("progress-bar").value = (audioPlayer.currentTime / audioPlayer.duration) * 100;
         document.getElementById("progress-played").style.width = `${(audioPlayer.currentTime / audioPlayer.duration) * 100}%`;
     });
+
+    function downloadTrack(audioSrc) {
+        const link = document.createElement("a");
+        link.href = audioSrc;
+        link.download = audioSrc.split("/").pop();
+        link.click();
+    }
 </script>
 
 </body>
