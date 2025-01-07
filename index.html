@@ -254,7 +254,7 @@
 
     // Render the track cards
     function renderTrackCards() {
-        tracks.forEach(track => {
+        tracks.forEach((track, index) => {
             const trackCard = document.createElement("div");
             trackCard.classList.add("track-card");
             trackCard.innerHTML = `
@@ -264,7 +264,7 @@
                     <p>${track.artist}</p>
                 </div>
             `;
-            trackCard.addEventListener("click", () => playTrack(track.id));
+            trackCard.addEventListener("click", () => playTrack(index));
             trackListElement.appendChild(trackCard);
         });
     }
@@ -306,8 +306,6 @@
     audioPlayer.addEventListener("ended", () => {
         nextTrack();
     });
-
-    playTrack(currentTrackIndex);
 
     document.getElementById("play-pause-btn").addEventListener("click", () => {
         if (audioPlayer.paused) {
