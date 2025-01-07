@@ -87,14 +87,10 @@
             background: linear-gradient(90deg, #9b30b1, #bb4fff);
             -webkit-background-clip: text;
             color: transparent;
-            font-size: 1rem;
+            font-size: 1.2rem; /* Same size as the artist name */
             margin-left: 5px;
-        }
-
-        .crown-icon {
-            color: gold;
-            font-size: 1.2rem;
-            margin-left: 5px;
+            text-shadow: 0 0 10px rgba(255, 0, 255, 0.8);
+            vertical-align: middle;
         }
 
         .sticky-bar {
@@ -176,8 +172,12 @@
         }
 
         .progress-bar {
-            width: 100%;
+            width: 80%;
             margin: 10px 0;
+            position: relative;
+            background: #333;
+            border-radius: 5px;
+            height: 6px;
         }
 
         .progress-bar input[type="range"] {
@@ -189,18 +189,27 @@
         }
 
         .progress-bar input[type="range"]::-webkit-slider-runnable-track {
-            background: #444;
+            background: transparent;
             height: 6px;
             border-radius: 5px;
         }
 
         .progress-bar input[type="range"]::-webkit-slider-thumb {
-            background: #1DB954;
+            background: #9b30b1;
             border-radius: 50%;
             width: 12px;
             height: 12px;
             cursor: pointer;
             border: none;
+        }
+
+        .progress-bar .played {
+            background: #bb4fff;
+            height: 100%;
+            border-radius: 5px;
+            position: absolute;
+            top: 0;
+            left: 0;
         }
 
         .grid-container {
@@ -247,6 +256,7 @@
     </div>
 
     <div class="progress-bar">
+        <div class="played" id="progress-played"></div>
         <input type="range" id="progress-bar" min="0" max="100" value="0">
     </div>
 
@@ -273,7 +283,7 @@
                 <div class="track-info">
                     <h3>${track.title}</h3>
                     <p>${track.artist}</p>
-                    ${track.verified ? '<span class="verified"><i class="fas fa-crown crown-icon"></i></span>' : ''}
+                    ${track.verified ? '<span class="verified"><i class="fas fa-check"></i></span>' : ''}
                 </div>
             `;
             trackCard.addEventListener("click", () => playTrack(track.id));
@@ -294,17 +304,19 @@
     const playPauseBtn = document.getElementById("play-pause-btn");
 
     shuffleBtn.addEventListener("click", () => {
-        if (isRepeat) return; // Don't toggle shuffle if repeat is active
         isShuffle = !isShuffle;
         shuffleBtn.classList.toggle("active-shuffle", isShuffle);
-        if (isShuffle) repeatBtn.classList.remove("active-repeat"); // Disable repeat when shuffle is on
+        if (isShuffle) {
+            repeatBtn.classList.remove("active-repeat");
+        }
     });
 
     repeatBtn.addEventListener("click", () => {
-        if (isShuffle) return; // Don't toggle repeat if shuffle is active
         isRepeat = !isRepeat;
         repeatBtn.classList.toggle("active-repeat", isRepeat);
-        if (isRepeat) shuffleBtn.classList.remove("active-shuffle"); // Disable shuffle when repeat is on
+        if (isRepeat) {
+            shuffleBtn.classList.remove("active-shuffle");
+        }
     });
 
     function playTrack(index) {
@@ -313,7 +325,7 @@
         audioPlayer.src = track.audio;
         document.getElementById("track-title").textContent = track.title;
         document.getElementById("track-cover").src = track.cover;
-        document.getElementById("track-artist").innerHTML = `${track.artist} <span class="verified"><i class="fas fa-crown crown-icon"></i></span>`;
+        document.getElementById("track-artist").innerHTML = `${track.artist} <span class="verified"><i class="fas fa-check"></i></span>`;
         audioPlayer.play();
         playPauseBtn.innerHTML = `<i class="fas fa-pause"></i>`;
     }
@@ -373,6 +385,7 @@
     audioPlayer.addEventListener("timeupdate", () => {
         document.getElementById("track-time").textContent = `${formatTime(audioPlayer.currentTime)} / ${formatTime(audioPlayer.duration)}`;
         document.getElementById("progress-bar").value = (audioPlayer.currentTime / audioPlayer.duration) * 100;
+        document.getElementById("progress-played").style.width = `${(audioPlayer.currentTime / audioPlayer.duration) * 100}%`;
     });
 </script>
 
