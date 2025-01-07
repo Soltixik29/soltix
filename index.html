@@ -156,19 +156,15 @@
         }
 
         .controls button:hover {
-            color: #1DB954;
+            color: #bb4fff; /* Purple hover effect */
         }
 
         .active {
-            color: #1DB954;
-        }
-
-        .active-shuffle {
-            color: #FFD700;
+            color: #bb4fff;
         }
 
         .active-repeat {
-            color: #FF1493;
+            color: #bb4fff; /* Purple active repeat */
         }
 
         .progress-bar {
@@ -195,7 +191,7 @@
         }
 
         .progress-bar input[type="range"]::-webkit-slider-thumb {
-            background: #9b30b1;
+            background: #9b30b1; /* Purple thumb */
             border-radius: 50%;
             width: 12px;
             height: 12px;
@@ -204,7 +200,7 @@
         }
 
         .progress-bar .played {
-            background: #bb4fff;
+            background: #bb4fff; /* Purple progress */
             height: 100%;
             border-radius: 5px;
             position: absolute;
@@ -248,7 +244,6 @@
     </div>
 
     <div class="controls">
-        <button id="shuffle-btn" title="Shuffle"><i class="fas fa-random"></i></button>
         <button id="prev-btn"><i class="fas fa-backward"></i></button>
         <button id="play-pause-btn"><i class="fas fa-play"></i></button>
         <button id="next-btn"><i class="fas fa-forward"></i></button>
@@ -294,29 +289,16 @@
     // Initialize track list
     renderTrackCards();
 
-    let isShuffle = false;
     let isRepeat = false;
     let currentTrackIndex = 0;
     const audioPlayer = new Audio(tracks[currentTrackIndex].audio);
 
-    const shuffleBtn = document.getElementById("shuffle-btn");
     const repeatBtn = document.getElementById("repeat-btn");
     const playPauseBtn = document.getElementById("play-pause-btn");
-
-    shuffleBtn.addEventListener("click", () => {
-        isShuffle = !isShuffle;
-        shuffleBtn.classList.toggle("active-shuffle", isShuffle);
-        if (isShuffle) {
-            repeatBtn.classList.remove("active-repeat");
-        }
-    });
 
     repeatBtn.addEventListener("click", () => {
         isRepeat = !isRepeat;
         repeatBtn.classList.toggle("active-repeat", isRepeat);
-        if (isRepeat) {
-            shuffleBtn.classList.remove("active-shuffle");
-        }
     });
 
     function playTrack(index) {
@@ -336,11 +318,7 @@
     }
 
     function nextTrack() {
-        if (isShuffle) {
-            currentTrackIndex = Math.floor(Math.random() * tracks.length);
-        } else {
-            currentTrackIndex = (currentTrackIndex + 1) % tracks.length;
-        }
+        currentTrackIndex = (currentTrackIndex + 1) % tracks.length;
         playTrack(currentTrackIndex);
     }
 
