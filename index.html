@@ -9,50 +9,49 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdn.jsdelivr.net/npm/daisyui@4.7.2/dist/full.css" rel="stylesheet" type="text/css" />
     <style>
-        body {
-            font-family: 'Poppins', sans-serif;
-            background-color: #121212;
-            color: white;
-        }
-
-        header {
-            background: linear-gradient(45deg, #6a11cb, #2575fc);
-            animation: gradient-animation 8s ease infinite alternate;
-        }
-
         @keyframes gradient-animation {
             0% { background: linear-gradient(45deg, #6a11cb, #9b30b1); }
             100% { background: linear-gradient(45deg, #bb4fff, #7027e8); }
         }
-
-        .track-card {
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .track-card:hover {
-            transform: scale(1.05);
-            box-shadow: 0 16px 32px rgba(0, 0, 0, 0.7);
-        }
     </style>
 </head>
-<body class="bg-gray-900 text-white">
+<body class="bg-gray-900 text-white dark:bg-gray-100 dark:text-gray-900 transition-colors duration-300">
 
-<header class="py-12 text-center">
+<!-- Dark/Light Mode Toggle -->
+<div class="fixed top-4 right-4">
+    <button id="theme-toggle" class="btn btn-ghost">
+        <i class="fas fa-moon"></i>
+    </button>
+</div>
+
+<header class="py-12 text-center bg-gradient-to-r from-purple-900 to-blue-900 animate-gradient">
     <h1 class="font-rock-salt text-5xl font-bold">Soltix</h1>
     <p class="text-gray-300 mt-2">Discover your next favorite tracks</p>
 </header>
 
-<main id="track-list" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 p-6">
+<!-- Search Bar -->
+<div class="p-6 max-w-4xl mx-auto">
+    <input type="text" id="search-bar" placeholder="Search tracks..." class="w-full p-3 rounded-lg bg-gray-800 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500">
+</div>
+
+<!-- Loading Animation -->
+<div id="loading" class="text-center py-8">
+    <i class="fas fa-spinner fa-spin text-3xl text-purple-500"></i>
+</div>
+
+<!-- Track List -->
+<main id="track-list" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 p-6 hidden">
     <!-- Tracks will be dynamically loaded here -->
 </main>
 
-<div class="sticky bottom-0 bg-gray-800 p-4 shadow-lg border-t border-gray-700">
+<!-- Sticky Player -->
+<div class="sticky bottom-0 bg-gray-800 dark:bg-gray-200 p-4 shadow-lg border-t border-gray-700 dark:border-gray-300">
     <div class="max-w-4xl mx-auto flex flex-col items-center space-y-4">
         <div class="flex items-center space-x-4">
             <img id="track-cover" src="https://example.com/track1.jpg" alt="Cover" class="w-12 h-12 rounded-lg">
             <div>
                 <h3 id="track-title" class="text-lg font-semibold">No Track Playing</h3>
-                <p id="track-artist" class="text-sm text-gray-400"></p>
+                <p id="track-artist" class="text-sm text-gray-400 dark:text-gray-600"></p>
             </div>
         </div>
 
@@ -64,7 +63,7 @@
 
         <div class="w-full max-w-2xl">
             <input type="range" id="progress-bar" min="0" max="100" value="0" class="range range-primary">
-            <div class="flex justify-between text-sm text-gray-400">
+            <div class="flex justify-between text-sm text-gray-400 dark:text-gray-600">
                 <span id="current-time">0:00</span>
                 <span id="total-time">3:30</span>
             </div>
@@ -82,18 +81,21 @@
     ];
 
     const trackListElement = document.getElementById("track-list");
+    const loadingElement = document.getElementById("loading");
+    const searchBar = document.getElementById("search-bar");
 
     // Render the track cards
-    function renderTrackCards() {
-        tracks.forEach((track, index) => {
+    function renderTrackCards(filteredTracks = tracks) {
+        trackListElement.innerHTML = "";
+        filteredTracks.forEach((track, index) => {
             const trackCard = document.createElement("div");
-            trackCard.classList.add("track-card", "bg-gray-800", "rounded-lg", "overflow-hidden", "shadow-lg");
+            trackCard.classList.add("track-card", "bg-gray-800", "dark:bg-gray-200", "rounded-lg", "overflow-hidden", "shadow-lg", "cursor-pointer");
             trackCard.innerHTML = `
                 <img src="${track.cover}" alt="${track.title}" class="w-full h-48 object-cover">
                 <div class="p-4">
                     <h3 class="text-lg font-semibold">${track.title}</h3>
-                    <p class="text-sm text-gray-400">${track.artist}</p>
-                    <p class="text-xs text-gray-500 mt-2">${track.duration}</p>
+                    <p class="text-sm text-gray-400 dark:text-gray-600">${track.artist}</p>
+                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">${track.duration}</p>
                 </div>
             `;
             trackCard.addEventListener("click", () => playTrack(index));
@@ -101,9 +103,31 @@
         });
     }
 
-    // Initialize track list
-    renderTrackCards();
+    // Search functionality
+    searchBar.addEventListener("input", (e) => {
+        const searchTerm = e.target.value.toLowerCase();
+        const filteredTracks = tracks.filter(track => 
+            track.title.toLowerCase().includes(searchTerm) || 
+            track.artist.toLowerCase().includes(searchTerm)
+        );
+        renderTrackCards(filteredTracks);
+    });
 
+    // Dark/Light Mode Toggle
+    const themeToggle = document.getElementById("theme-toggle");
+    themeToggle.addEventListener("click", () => {
+        document.documentElement.classList.toggle("dark");
+        themeToggle.innerHTML = document.documentElement.classList.contains("dark") ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
+    });
+
+    // Simulate loading
+    setTimeout(() => {
+        loadingElement.classList.add("hidden");
+        trackListElement.classList.remove("hidden");
+        renderTrackCards();
+    }, 1000);
+
+    // Audio player logic (same as before)
     let currentTrackIndex = 0;
     const audioPlayer = new Audio(tracks[currentTrackIndex].audio);
 
