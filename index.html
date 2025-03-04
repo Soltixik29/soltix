@@ -7,239 +7,69 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Rock+Salt&display=swap" rel="stylesheet">
     <script src="https://kit.fontawesome.com/a1dfa2d810.js" crossorigin="anonymous"></script>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.7.2/dist/full.css" rel="stylesheet" type="text/css" />
     <style>
         body {
             font-family: 'Poppins', sans-serif;
             background-color: #121212;
-            margin: 0;
             color: white;
-            overflow-x: hidden;
         }
 
         header {
             background: linear-gradient(45deg, #6a11cb, #2575fc);
             animation: gradient-animation 8s ease infinite alternate;
-            padding: 40px 20px;
-            text-align: center;
         }
 
         @keyframes gradient-animation {
-            0% {
-                background: linear-gradient(45deg, #6a11cb, #9b30b1);
-            }
-            100% {
-                background: linear-gradient(45deg, #bb4fff, #7027e8);
-            }
-        }
-
-        header h1 {
-            font-family: 'Rock Salt', cursive;
-            font-size: 3rem;
-            font-weight: 700;
-            color: white;
-        }
-
-        header p {
-            color: #bbb;
-            font-size: 1rem;
+            0% { background: linear-gradient(45deg, #6a11cb, #9b30b1); }
+            100% { background: linear-gradient(45deg, #bb4fff, #7027e8); }
         }
 
         .track-card {
-            background-color: #282828;
-            border-radius: 8px;
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.7);
-            cursor: pointer;
-            transition: all 0.3s ease;
-            overflow: hidden;
-            position: relative;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
 
         .track-card:hover {
             transform: scale(1.05);
             box-shadow: 0 16px 32px rgba(0, 0, 0, 0.7);
         }
-
-        .track-card img {
-            width: 100%;
-            height: 200px;
-            object-fit: cover;
-        }
-
-        .track-info {
-            padding: 10px;
-            text-align: center;
-        }
-
-        .track-info h3 {
-            font-size: 1.2rem;
-            font-weight: 500;
-            color: white;
-            margin-bottom: 5px;
-        }
-
-        .track-info p {
-            color: #aaa;
-            font-size: 0.9rem;
-            margin: 2px 0;
-        }
-
-        .sticky-bar {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            background-color: #1a1a1a;
-            padding: 15px 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.7);
-            z-index: 999;
-            border-top: 1px solid #333;
-        }
-
-        .sticky-bar .track-info {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            color: white;
-            flex: 1;
-            min-width: 200px;
-        }
-
-        .sticky-bar .track-info img {
-            height: 50px;
-            width: 50px;
-            object-fit: cover;
-            border-radius: 8px;
-        }
-
-        .sticky-bar .track-info h3 {
-            font-size: 1rem;
-            font-weight: 500;
-            max-width: 150px;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            overflow: hidden;
-        }
-
-        .sticky-bar .track-info p {
-            font-size: 0.8rem;
-            color: #bbb;
-            margin-left: 10px;
-        }
-
-        .controls {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            justify-content: center;
-        }
-
-        .controls button {
-            background: none;
-            border: none;
-            color: #fff;
-            font-size: 1.5rem;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .controls button:hover {
-            color: #1DB954;
-        }
-
-        .progress-bar {
-            width: 80%;
-            margin: 10px 0;
-            position: relative;
-            background: #333;
-            border-radius: 5px;
-            height: 6px;
-        }
-
-        .progress-bar input[type="range"] {
-            width: 100%;
-            background: transparent;
-            appearance: none;
-            height: 6px;
-            border-radius: 5px;
-        }
-
-        .progress-bar input[type="range"]::-webkit-slider-runnable-track {
-            background: transparent;
-            height: 6px;
-            border-radius: 5px;
-        }
-
-        .progress-bar input[type="range"]::-webkit-slider-thumb {
-            background: #9b30b1;
-            border-radius: 50%;
-            width: 12px;
-            height: 12px;
-            cursor: pointer;
-            border: none;
-            position: absolute;
-            top: 0;
-            left: 0;
-        }
-
-        .progress-bar .played {
-            background: #bb4fff;
-            height: 100%;
-            border-radius: 5px;
-            position: absolute;
-            top: 0;
-            left: 0;
-        }
-
-        .grid-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 20px;
-            padding: 20px;
-        }
-
-        .track-meta {
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.8rem;
-            color: #888;
-        }
     </style>
 </head>
-<body>
+<body class="bg-gray-900 text-white">
 
-<header>
-    <h1>Soltix</h1>
-    <p>Discover your next favorite tracks</p>
+<header class="py-12 text-center">
+    <h1 class="font-rock-salt text-5xl font-bold">Soltix</h1>
+    <p class="text-gray-300 mt-2">Discover your next favorite tracks</p>
 </header>
 
-<main id="track-list" class="grid-container">
+<main id="track-list" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 p-6">
     <!-- Tracks will be dynamically loaded here -->
 </main>
 
-<div class="sticky-bar">
-    <div class="track-info">
-        <img id="track-cover" src="https://example.com/track1.jpg" alt="Cover">
-        <div>
-            <h3 id="track-title">No Track Playing</h3>
-            <p id="track-artist"></p>
+<div class="sticky bottom-0 bg-gray-800 p-4 shadow-lg border-t border-gray-700">
+    <div class="max-w-4xl mx-auto flex flex-col items-center space-y-4">
+        <div class="flex items-center space-x-4">
+            <img id="track-cover" src="https://example.com/track1.jpg" alt="Cover" class="w-12 h-12 rounded-lg">
+            <div>
+                <h3 id="track-title" class="text-lg font-semibold">No Track Playing</h3>
+                <p id="track-artist" class="text-sm text-gray-400"></p>
+            </div>
+        </div>
+
+        <div class="flex items-center space-x-6">
+            <button id="prev-btn" class="btn btn-ghost text-xl"><i class="fas fa-backward"></i></button>
+            <button id="play-pause-btn" class="btn btn-ghost text-2xl"><i class="fas fa-play"></i></button>
+            <button id="next-btn" class="btn btn-ghost text-xl"><i class="fas fa-forward"></i></button>
+        </div>
+
+        <div class="w-full max-w-2xl">
+            <input type="range" id="progress-bar" min="0" max="100" value="0" class="range range-primary">
+            <div class="flex justify-between text-sm text-gray-400">
+                <span id="current-time">0:00</span>
+                <span id="total-time">3:30</span>
+            </div>
         </div>
     </div>
-
-    <div class="controls">
-        <button id="prev-btn"><i class="fas fa-backward"></i></button>
-        <button id="play-pause-btn"><i class="fas fa-play"></i></button>
-        <button id="next-btn"><i class="fas fa-forward"></i></button>
-    </div>
-
-    <div class="progress-bar">
-        <div class="played" id="progress-played"></div>
-        <input type="range" id="progress-bar" min="0" max="100" value="0">
-    </div>
-
-    <div id="track-time">0:00 / 3:30</div>
 </div>
 
 <script>
@@ -257,12 +87,13 @@
     function renderTrackCards() {
         tracks.forEach((track, index) => {
             const trackCard = document.createElement("div");
-            trackCard.classList.add("track-card");
+            trackCard.classList.add("track-card", "bg-gray-800", "rounded-lg", "overflow-hidden", "shadow-lg");
             trackCard.innerHTML = `
-                <img src="${track.cover}" alt="${track.title}">
-                <div class="track-info">
-                    <h3>${track.title}</h3>
-                    <p>${track.artist}</p>
+                <img src="${track.cover}" alt="${track.title}" class="w-full h-48 object-cover">
+                <div class="p-4">
+                    <h3 class="text-lg font-semibold">${track.title}</h3>
+                    <p class="text-sm text-gray-400">${track.artist}</p>
+                    <p class="text-xs text-gray-500 mt-2">${track.duration}</p>
                 </div>
             `;
             trackCard.addEventListener("click", () => playTrack(index));
@@ -332,9 +163,9 @@
     }
 
     audioPlayer.addEventListener("timeupdate", () => {
-        document.getElementById("track-time").textContent = `${formatTime(audioPlayer.currentTime)} / ${formatTime(audioPlayer.duration)}`;
+        document.getElementById("current-time").textContent = formatTime(audioPlayer.currentTime);
+        document.getElementById("total-time").textContent = formatTime(audioPlayer.duration);
         document.getElementById("progress-bar").value = (audioPlayer.currentTime / audioPlayer.duration) * 100;
-        document.getElementById("progress-played").style.width = `${(audioPlayer.currentTime / audioPlayer.duration) * 100}%`;
     });
 </script>
 
