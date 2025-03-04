@@ -3,30 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Soltix | Music Player</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Rock+Salt&display=swap" rel="stylesheet">
+    <title>Soltix | Modern Music Player</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <script src="https://kit.fontawesome.com/a1dfa2d810.js" crossorigin="anonymous"></script>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.7.2/dist/full.css" rel="stylesheet" type="text/css" />
     <style>
         @keyframes gradient-animation {
-            0% { background: linear-gradient(45deg, #6a11cb, #9b30b1); }
+            0% { background: linear-gradient(45deg, #6a11cb, #2575fc); }
             100% { background: linear-gradient(45deg, #bb4fff, #7027e8); }
+        }
+
+        .animate-gradient {
+            animation: gradient-animation 8s ease infinite alternate;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
     </style>
 </head>
-<body class="bg-gray-900 text-white dark:bg-gray-100 dark:text-gray-900 transition-colors duration-300">
+<body class="bg-gray-900 text-white">
 
-<!-- Dark/Light Mode Toggle -->
-<div class="fixed top-4 right-4">
-    <button id="theme-toggle" class="btn btn-ghost">
-        <i class="fas fa-moon"></i>
-    </button>
-</div>
-
+<!-- Header -->
 <header class="py-12 text-center bg-gradient-to-r from-purple-900 to-blue-900 animate-gradient">
-    <h1 class="font-rock-salt text-5xl font-bold">Soltix</h1>
-    <p class="text-gray-300 mt-2">Discover your next favorite tracks</p>
+    <h1 class="text-5xl font-bold">Soltix</h1>
+    <p class="text-gray-300 mt-2">Modern Music Player</p>
 </header>
 
 <!-- Search Bar -->
@@ -35,7 +41,7 @@
 </div>
 
 <!-- Loading Animation -->
-<div id="loading" class="text-center py-8">
+<div id="loading" class="text-center py-8 fade-in">
     <i class="fas fa-spinner fa-spin text-3xl text-purple-500"></i>
 </div>
 
@@ -44,26 +50,31 @@
     <!-- Tracks will be dynamically loaded here -->
 </main>
 
+<!-- Audio Visualizer -->
+<canvas id="visualizer" class="w-full h-32 mt-4"></canvas>
+
 <!-- Sticky Player -->
-<div class="sticky bottom-0 bg-gray-800 dark:bg-gray-200 p-4 shadow-lg border-t border-gray-700 dark:border-gray-300">
+<div class="sticky bottom-0 bg-gray-800 p-4 shadow-lg border-t border-gray-700">
     <div class="max-w-4xl mx-auto flex flex-col items-center space-y-4">
         <div class="flex items-center space-x-4">
-            <img id="track-cover" src="https://example.com/track1.jpg" alt="Cover" class="w-12 h-12 rounded-lg">
+            <img id="track-cover" src="https://via.placeholder.com/150" alt="Cover" class="w-12 h-12 rounded-lg">
             <div>
                 <h3 id="track-title" class="text-lg font-semibold">No Track Playing</h3>
-                <p id="track-artist" class="text-sm text-gray-400 dark:text-gray-600"></p>
+                <p id="track-artist" class="text-sm text-gray-400"></p>
             </div>
         </div>
 
         <div class="flex items-center space-x-6">
+            <button id="shuffle-btn" class="btn btn-ghost text-xl"><i class="fas fa-random"></i></button>
             <button id="prev-btn" class="btn btn-ghost text-xl"><i class="fas fa-backward"></i></button>
             <button id="play-pause-btn" class="btn btn-ghost text-2xl"><i class="fas fa-play"></i></button>
             <button id="next-btn" class="btn btn-ghost text-xl"><i class="fas fa-forward"></i></button>
+            <button id="repeat-btn" class="btn btn-ghost text-xl"><i class="fas fa-redo"></i></button>
         </div>
 
         <div class="w-full max-w-2xl">
             <input type="range" id="progress-bar" min="0" max="100" value="0" class="range range-primary">
-            <div class="flex justify-between text-sm text-gray-400 dark:text-gray-600">
+            <div class="flex justify-between text-sm text-gray-400">
                 <span id="current-time">0:00</span>
                 <span id="total-time">3:30</span>
             </div>
@@ -71,31 +82,104 @@
     </div>
 </div>
 
+<!-- YouTube Player -->
+<div id="youtube-player" class="hidden"></div>
+
+<!-- Monetization -->
+<div class="fixed bottom-20 right-4">
+    <a href="https://www.buymeacoffee.com/yourusername" target="_blank" class="btn btn-primary">
+        <i class="fas fa-coffee"></i> Buy Me a Coffee
+    </a>
+</div>
+
+<!-- YouTube API -->
+<script src="https://www.youtube.com/iframe_api"></script>
+<script>
+    let youtubePlayer;
+    function onYouTubeIframeAPIReady() {
+        youtubePlayer = new YT.Player("youtube-player", {
+            height: "0",
+            width: "0",
+            events: {
+                "onReady": onPlayerReady
+            }
+        });
+    }
+
+    function onPlayerReady(event) {
+        event.target.playVideo();
+    }
+
+    function playYouTubeVideo(videoId) {
+        youtubePlayer.loadVideoById(videoId);
+        youtubePlayer.playVideo();
+    }
+</script>
+
+<!-- Main Script -->
 <script>
     const tracks = [
-        { id: "i-belived", title: "I Belived", artist: "Soltix", duration: "1:57", cover: "/assets/imgs/i-belived.jpeg", audio: "/assets/music/i-belived.mp3" },
-        { id: "pro-anicku", title: "Pro Aničku 🫶🏻", artist: "Soltix", duration: "1:57", cover: "/assets/imgs/IMG_1437.jpeg", audio: "/assets/music/pro-anicku.mp3" },
-        { id: "lost-boy", title: "Lost Boy", artist: "Soltix", duration: "3:44", cover: "/assets/imgs/0298035F-E43F-483F-A1C7-996CD4DCD312.jpeg", audio: "/assets/music/Lost Boy.mp3" },
-        { id: "demons", title: "Demons", artist: "Soltix", duration: "3:15", cover: "/assets/imgs/96147AD7-CB32-4782-A57A-A719ACC67524.jpeg", audio: "/assets/music/Demons.mp3" },
-        { id: "rizz", title: "Rizz", artist: "Soltix", duration: "2:13", cover: "/assets/imgs/BC1A09C6-4A99-4F27-9879-F66DAE6264DF.jpeg", audio: "/assets/music/Rizz.mp3" }
+        { id: "i-belived", title: "I Belived", artist: "Soltix", duration: "1:57", cover: "https://via.placeholder.com/150", audio: "/assets/music/i-belived.mp3" },
+        { id: "pro-anicku", title: "Pro Aničku 🫶🏻", artist: "Soltix", duration: "1:57", cover: "https://via.placeholder.com/150", audio: "/assets/music/pro-anicku.mp3" },
+        { id: "lost-boy", title: "Lost Boy", artist: "Soltix", duration: "3:44", cover: "https://via.placeholder.com/150", audio: "/assets/music/Lost Boy.mp3" },
+        { id: "demons", title: "Demons", artist: "Soltix", duration: "3:15", cover: "https://via.placeholder.com/150", audio: "/assets/music/Demons.mp3" },
+        { id: "rizz", title: "Rizz", artist: "Soltix", duration: "2:13", cover: "https://via.placeholder.com/150", audio: "/assets/music/Rizz.mp3" }
     ];
 
     const trackListElement = document.getElementById("track-list");
     const loadingElement = document.getElementById("loading");
     const searchBar = document.getElementById("search-bar");
 
-    // Render the track cards
+    let currentTrackIndex = 0;
+    let isShuffle = false;
+    let isRepeat = false;
+    const audioPlayer = new Audio(tracks[currentTrackIndex].audio);
+
+    // Audio Visualizer
+    const canvas = document.getElementById("visualizer");
+    const ctx = canvas.getContext("2d");
+
+    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    const analyser = audioContext.createAnalyser();
+    const source = audioContext.createMediaElementSource(audioPlayer);
+    source.connect(analyser);
+    analyser.connect(audioContext.destination);
+    analyser.fftSize = 256;
+
+    const bufferLength = analyser.frequencyBinCount;
+    const dataArray = new Uint8Array(bufferLength);
+
+    function drawVisualizer() {
+        requestAnimationFrame(drawVisualizer);
+        analyser.getByteFrequencyData(dataArray);
+
+        ctx.fillStyle = "rgba(0, 0, 0, 0.1)";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        const barWidth = (canvas.width / bufferLength) * 2.5;
+        let x = 0;
+
+        dataArray.forEach((value) => {
+            const barHeight = value / 2;
+            ctx.fillStyle = `rgb(156, 163, 175, ${value / 255})`;
+            ctx.fillRect(x, canvas.height - barHeight, barWidth, barHeight);
+            x += barWidth + 1;
+        });
+    }
+
+    drawVisualizer();
+
+    // Render track cards
     function renderTrackCards(filteredTracks = tracks) {
         trackListElement.innerHTML = "";
         filteredTracks.forEach((track, index) => {
             const trackCard = document.createElement("div");
-            trackCard.classList.add("track-card", "bg-gray-800", "dark:bg-gray-200", "rounded-lg", "overflow-hidden", "shadow-lg", "cursor-pointer");
+            trackCard.classList.add("track-card", "bg-gray-800", "rounded-lg", "overflow-hidden", "shadow-lg", "cursor-pointer", "fade-in");
             trackCard.innerHTML = `
                 <img src="${track.cover}" alt="${track.title}" class="w-full h-48 object-cover">
                 <div class="p-4">
                     <h3 class="text-lg font-semibold">${track.title}</h3>
-                    <p class="text-sm text-gray-400 dark:text-gray-600">${track.artist}</p>
-                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">${track.duration}</p>
+                    <p class="text-sm text-gray-400">${track.artist}</p>
                 </div>
             `;
             trackCard.addEventListener("click", () => playTrack(index));
@@ -113,11 +197,21 @@
         renderTrackCards(filteredTracks);
     });
 
-    // Dark/Light Mode Toggle
-    const themeToggle = document.getElementById("theme-toggle");
-    themeToggle.addEventListener("click", () => {
-        document.documentElement.classList.toggle("dark");
-        themeToggle.innerHTML = document.documentElement.classList.contains("dark") ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
+    // Shuffle functionality
+    document.getElementById("shuffle-btn").addEventListener("click", () => {
+        isShuffle = !isShuffle;
+        if (isShuffle) {
+            tracks.sort(() => Math.random() - 0.5);
+        } else {
+            tracks.sort((a, b) => a.title.localeCompare(b.title));
+        }
+        renderTrackCards();
+    });
+
+    // Repeat functionality
+    document.getElementById("repeat-btn").addEventListener("click", () => {
+        isRepeat = !isRepeat;
+        audioPlayer.loop = isRepeat;
     });
 
     // Simulate loading
@@ -127,10 +221,7 @@
         renderTrackCards();
     }, 1000);
 
-    // Audio player logic (same as before)
-    let currentTrackIndex = 0;
-    const audioPlayer = new Audio(tracks[currentTrackIndex].audio);
-
+    // Audio player logic
     const playPauseBtn = document.getElementById("play-pause-btn");
 
     function playTrack(index) {
@@ -143,6 +234,7 @@
         audioPlayer.play();
         playPauseBtn.innerHTML = `<i class="fas fa-pause"></i>`;
     }
+
 
     function pauseTrack() {
         audioPlayer.pause();
